@@ -1,0 +1,146 @@
+/**
+ * ============================================================
+ * Big V's Best Routes™ — Application Router
+ * /src/app/Router.jsx
+ *
+ * RUN 1 — Identity Refactor (preserved)
+ * RUN 2 — Dashboard Shell + Role Routing + Responsive Wrap
+ *
+ * Routing strategy: Hash routing (preserved from original)
+ * Role separation:
+ *   Fleet Dashboard  → fleet_admin / fleet_manager / dispatcher
+ *   Driver PWA       → driver (standalone, no auth guard)
+ *   Fleet Controller → fleet_controller (standalone, no admin controls)
+ * ============================================================
+ */
+
+import { createHashRouter, Navigate } from 'react-router-dom'
+
+import AppShell      from './layouts_AppShell'
+import AuthGuard     from './components_auth_AuthGuard'
+
+// ── Auth Pages ────────────────────────────────────────────────
+import Login         from './pages_auth_Login'
+import DriverLogin   from './pages_auth_DriverLogin'
+import ResetConfirm  from './pages_auth_ResetConfirm'
+import Setup         from './pages_auth_Setup'
+
+// ── Standalone PWA Routes (no auth guard — role-separated) ────
+import DriverImport         from './pages_DriverImport'
+import DriverSetup          from './pages_DriverSetup'
+import DriverApp            from './pages_DriverApp'          // Driver PWA
+import AP3X                 from './pages_AP3X'               // AP3X Driver Platform
+import FleetControllerPwa   from './pages_FleetControllerPwa' // RUN 2 — Fleet Controller PWA
+
+// ── Fleet Dashboard Pages (admin-guarded) ────────────────────
+import Dashboard     from './pages_Dashboard'
+import Fleet         from './pages_Fleet'
+import Drivers       from './pages_Drivers'
+import Vehicles      from './pages_Vehicles'
+import Dispatch      from './pages_Dispatch'
+import Navigation    from './pages_Navigation'
+import Compliance    from './pages_Compliance'
+import Safety        from './pages_Safety'
+import Analytics     from './pages_Analytics'
+import Incidents     from './pages_Incidents'
+import Messaging     from './pages_Messaging'
+import Settings      from './pages_Settings'
+import AIPage        from './pages_AI'
+import NotFound      from './pages_NotFound'
+
+// ── RUN 2 New Routes (admin-guarded) ─────────────────────────
+import Reports          from './pages_Reports'           // RUN 2
+import PwaDeployment    from './pages_PwaDeployment'     // RUN 2
+import ApiSettings      from './pages_ApiSettings'       // RUN 2
+import BackendSettings  from './pages_BackendSettings'   // RUN 2
+
+// ─── Helpers ──────────────────────────────────────────────────
+const setupDone = () => localStorage.getItem('apex:setup_complete') === 'true'
+
+// Root redirect: first-run → setup, authenticated → dashboard
+const RootRedirect = () =>
+  setupDone()
+    ? <Navigate to="/dashboard" replace />
+    : <Navigate to="/auth/setup" replace />
+
+// Login gate: if setup not done, redirect to setup
+const LoginOrSetup = ({ element }) =>
+  !setupDone() ? <Navigate to="/auth/setup" replace /> : element
+
+// ─── Router ───────────────────────────────────────────────────
+export const router = createHashRouter([
+
+  // ── First-run Setup (public) ──────────────────────────────
+  { path: '/auth/setup',         element: <Setup /> },
+
+  // ── Auth Routes (public) ──────────────────────────────────
+  { path: '/auth/login',         element: <LoginOrSetup element={<Login />} /> },
+  { path: '/auth/driver',        element: <LoginOrSetup element={<DriverLogin />} /> },
+  { path: '/auth/reset-confirm', element: <ResetConfirm /> },
+
+  // ── Standalone Driver Routes (public — no admin controls) ──
+  { path: '/driver-import',      element: <DriverImport /> },
+  { path: '/driver-app',         element: <DriverApp /> },    // Full Driver PWA
+  { path: '/ap3x',               element: <AP3X /> },         // AP3X Driver Platform
+
+  // ── Fleet Controller PWA (standalone — no admin controls) ─
+  // RUN 2: shell stub — full controller actions in Run 7
+  { path: '/fleet-controller-pwa', element: <FleetControllerPwa /> },
+
+  // ── Protected Fleet Dashboard Shell ───────────────────────
+  {
+    path: '/',
+    element: (
+      <AuthGuard>
+        <AppShell />
+      </AuthGuard>
+    ),
+    children: [
+      // Root → dashboard (or setup on first run)
+      { index: true, element: <RootRedirect /> },
+
+      // ── Core ──────────────────────────────────────────────
+      { path: 'dashboard',              element: <Dashboard /> },
+
+      // ── Operations ────────────────────────────────────────
+      { path: 'fleet',                  element: <Fleet /> },
+      { path: 'fleet/:vehicleId',       element: <Fleet /> },
+      { path: 'drivers',                element: <Drivers /> },
+      { path: 'drivers/:driverId',      element: <Drivers /> },
+      { path: 'vehicles',               element: <Vehicles /> },
+      { path: 'vehicles/:vehicleId',    element: <Vehicles /> },
+      { path: 'dispatch',               element: <Dispatch /> },
+      { path: 'driver-setup',           element: <DriverSetup /> },
+
+      // ── Navigation / Map ──────────────────────────────────
+      { path: 'navigation',             element: <Navigation /> },
+      // Alias for routes/map target from Run 2 spec
+      { path: 'routes',                 element: <Navigation /> },
+      { path: 'map',                    element: <Navigation /> },
+
+      // ── Intelligence ──────────────────────────────────────
+      { path: 'ai',                     element: <AIPage /> },
+      { path: 'safety',                 element: <Safety /> },
+      { path: 'compliance',             element: <Compliance /> },
+      { path: 'analytics',              element: <Analytics /> },
+
+      // ── Reporting ─────────────────────────────────────────
+      { path: 'incidents',              element: <Incidents /> },
+      { path: 'incidents/:incidentId',  element: <Incidents /> },
+      { path: 'messaging',              element: <Messaging /> },
+      { path: 'reports',                element: <Reports /> },         // RUN 2
+
+      // ── System ────────────────────────────────────────────
+      { path: 'settings',               element: <Settings /> },
+      { path: 'settings/:section',      element: <Settings /> },
+      { path: 'pwa-deployment',         element: <PwaDeployment /> },   // RUN 2
+      { path: 'api-settings',           element: <ApiSettings /> },     // RUN 2
+      { path: 'backend-settings',       element: <BackendSettings /> }, // RUN 2
+    ]
+  },
+
+  // ── 404 ───────────────────────────────────────────────────
+  { path: '*', element: <NotFound /> }
+])
+
+export default router
