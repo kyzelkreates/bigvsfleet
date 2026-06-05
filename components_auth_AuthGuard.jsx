@@ -19,9 +19,10 @@ import Icon from './components_ui_Icon'
 
 export default function AuthGuard({ children, requiredRole = null }) {
   const location = useLocation()
-  const { role, isAuthenticated } = useAuthStore(s => ({
+  const { role, isAuthenticated, demoPublicAccess } = useAuthStore(s => ({
     role:            s.role,
     isAuthenticated: s.isAuthenticated,
+    demoPublicAccess: s.demoPublicAccess,
   }))
   const [checking, setChecking] = useState(true)
 
@@ -64,6 +65,16 @@ export default function AuthGuard({ children, requiredRole = null }) {
         </div>
       </div>
     )
+  }
+
+  // ── Demo public access — bypass auth in demo mode ─────────
+  // Auth is PRESERVED and can be re-enabled. Flag set in core_storage.js.
+  // To re-enable auth: set demoPublicAccess=false from Settings or API.
+  const isDemoMode = (() => { try { return JSON.parse(localStorage.getItem('bigv:mode:demoLive') || '{}')?.demoLiveMode?.mode !== 'live' } catch { return true } })()
+  if (demoPublicAccess && isDemoMode) {
+    // Demo public access active — allow through without login
+    // Auth files, login, register, providers all remain intact
+    return children
   }
 
   // ── Not authenticated → login ───────────────────────────────

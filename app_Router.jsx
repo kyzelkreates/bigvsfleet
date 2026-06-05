@@ -55,20 +55,30 @@ import ApiSettings      from './pages_ApiSettings'       // RUN 2
 import BackendSettings  from './pages_BackendSettings'   // RUN 2
 
 // ─── Helpers ──────────────────────────────────────────────────
-const setupDone = () => localStorage.getItem('apex:setup_complete') === 'true'
 
 // Root redirect: first-run → setup, authenticated → dashboard
-const RootRedirect = () =>
-  setupDone()
-    ? <Navigate to="/dashboard" replace />
-    : <Navigate to="/auth/setup" replace />
+// Root redirect:
+//  - First-ever visit (no setup) → /auth/setup
+//  - Has setup, but hasn't seen landing → /landing (investor/demo entry)
+//  - Has setup + seen landing → /dashboard
+const setupDoneFlag  = () => localStorage.getItem('apex:setup_complete') === 'true'
+const seenLandingFlag = () => localStorage.getItem('bigv:landing:seen') === 'true'
+
+const RootRedirect = () => {
+  if (!setupDoneFlag()) return <Navigate to="/auth/setup" replace />
+  if (!seenLandingFlag()) return <Navigate to="/landing" replace />
+  return <Navigate to="/dashboard" replace />
+}
 
 // Login gate: if setup not done, redirect to setup
 const LoginOrSetup = ({ element }) =>
-  !setupDone() ? <Navigate to="/auth/setup" replace /> : element
+  !setupDoneFlag() ? <Navigate to="/auth/setup" replace /> : element
 
 // ─── Router ───────────────────────────────────────────────────
 export const router = createHashRouter([
+
+  // ── LANDING PAGE (always public) ────────────────────────────
+  { path: '/landing',            element: <Landing /> },
 
   // ── First-run Setup (public) ──────────────────────────────
   { path: '/auth/setup',         element: <Setup /> },
@@ -96,7 +106,7 @@ export const router = createHashRouter([
       </AuthGuard>
     ),
     children: [
-      // Root → dashboard (or setup on first run)
+      // /app root → dashboard (or setup on first run)
       { index: true, element: <RootRedirect /> },
 
       // ── Core ──────────────────────────────────────────────

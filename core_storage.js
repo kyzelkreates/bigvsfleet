@@ -58,6 +58,7 @@ export const STORAGE_KEYS = {
   DEMO_LIVE_MODE:     'bigv:mode:demoLive',
   BACKEND_READINESS:  'bigv:mode:backendReadiness',
   SYNC_STATUS:        'bigv:mode:syncStatus',
+  DEMO_PUBLIC_ACCESS: 'bigv:config:demoPublicAccess',
 
   // Driver
   DRIVER_SELECTED:    'apex:driver:selected',
@@ -170,6 +171,10 @@ export const useAuthStore = create((set) => ({
     set({ role })
   },
   setLoading: (isLoading) => set({ isLoading }),
+  setDemoPublicAccess: (val) => {
+    persist.set('bigv:config:demoPublicAccess', val)
+    set({ demoPublicAccess: val })
+  },
   clearAuth: () => {
     persist.remove(STORAGE_KEYS.AUTH_SESSION)
     persist.remove(STORAGE_KEYS.AUTH_USER)
