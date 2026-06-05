@@ -305,6 +305,7 @@ export default function Landing() {
             )}
             <button
               onClick={openDashboard}
+              data-testid="nav-btn-dashboard"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/25 text-amber-400 rounded-lg text-xs font-semibold hover:bg-amber-500/18 transition-colors">
               <Ico name="LayoutDash" size={12} />
               <span className="hidden sm:inline">Dashboard</span>
@@ -312,6 +313,7 @@ export default function Landing() {
             </button>
             <button
               onClick={openDriverPwa}
+              data-testid="nav-btn-driver"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/8 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-semibold hover:bg-emerald-500/15 transition-colors">
               <Ico name="Smartphone" size={12} />
               <span className="hidden sm:inline">Driver</span>
@@ -319,6 +321,7 @@ export default function Landing() {
             </button>
             <button
               onClick={openControllerPwa}
+              data-testid="nav-btn-controller"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-500/8 border border-violet-500/20 text-violet-400 rounded-lg text-xs font-semibold hover:bg-violet-500/15 transition-colors">
               <Ico name="Activity" size={12} />
               <span className="hidden sm:inline">Controller</span>

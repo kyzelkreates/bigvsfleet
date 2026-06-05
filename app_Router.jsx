@@ -113,7 +113,7 @@ export const router = createHashRouter([
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <DashboardRoot /> },
+      { index: true, element: <Navigate to="dashboard" replace /> },
 
       // ── Core ──────────────────────────────────────────────
       { path: 'dashboard',              element: <Dashboard /> },
