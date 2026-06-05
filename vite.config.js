@@ -32,7 +32,7 @@ export default defineConfig({
         display:          'standalone',
         orientation:      'any',
         scope:            '/',
-        start_url:        '/#/dashboard',
+        start_url:        '/#/',
         categories:       ['business', 'navigation', 'productivity'],
         icons: [
           {
@@ -50,10 +50,24 @@ export default defineConfig({
         ],
         shortcuts: [
           {
+            name:       'Fleet Dashboard',
+            short_name: 'Dashboard',
+            url:        '/#/app/dashboard',
+            description: 'Open the Fleet Dashboard',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }],
+          },
+          {
             name:       'Driver App',
-            short_name: 'Driver',
+            short_name: 'Driver PWA',
             url:        '/#/driver-app',
             description: 'Open the Driver PWA',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }],
+          },
+          {
+            name:       'Fleet Controller',
+            short_name: 'Controller',
+            url:        '/#/fleet-controller-pwa',
+            description: 'Open the Fleet Controller PWA',
             icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }],
           },
         ],
