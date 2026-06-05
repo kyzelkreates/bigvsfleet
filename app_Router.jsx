@@ -53,6 +53,7 @@ import Reports          from './pages_Reports'           // RUN 2
 import PwaDeployment    from './pages_PwaDeployment'     // RUN 2
 import ApiSettings      from './pages_ApiSettings'       // RUN 2
 import BackendSettings  from './pages_BackendSettings'   // RUN 2
+import Landing        from './pages_Landing'              // LANDING PAGE RUN
 
 // ─── Helpers ──────────────────────────────────────────────────
 
@@ -61,7 +62,12 @@ import BackendSettings  from './pages_BackendSettings'   // RUN 2
 //  - First-ever visit (no setup) → /auth/setup
 //  - Has setup, but hasn't seen landing → /landing (investor/demo entry)
 //  - Has setup + seen landing → /dashboard
-const setupDoneFlag  = () => localStorage.getItem('apex:setup_complete') === 'true'
+// Demo-safe: treat as already set up unless explicitly in first-run setup flow
+// New visitors on Vercel won't have 'apex:setup_complete' so default to true (demo build)
+const setupDoneFlag  = () => {
+  const val = localStorage.getItem('apex:setup_complete')
+  return val === null ? true : val === 'true'  // null = first deploy = treat as done
+}
 const seenLandingFlag = () => localStorage.getItem('bigv:landing:seen') === 'true'
 
 const RootRedirect = () => {

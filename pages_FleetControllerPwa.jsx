@@ -403,7 +403,6 @@ function VehicleReadiness({ viewModel }) {
         return (
           <div key={v.vehicleId} className={clsx('rounded-xl border overflow-hidden', r.border, r.bg)}>
             <button
-              onClick={() => setExpandedId(isOpen ? v.vehicleId : v.vehicleId === expandedId ? null : v.vehicleId)}
               onClick={() => setExpandedId(isOpen ? null : v.vehicleId)}
               className="w-full flex items-center gap-3 px-4 py-3 hover:opacity-90 transition-opacity"
             >
