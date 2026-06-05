@@ -59,9 +59,20 @@
       width: 100%;
       opacity: 1;
       transition: opacity .25s ease;
+      position: relative;
+      z-index: 1;
+    }
+    #root {
+      position: relative;
+      z-index: 2;
     }
     #static-shell.gone {
-      display: none;
+      display: none !important;
+      pointer-events: none;
+    }
+    #root.ready ~ #static-shell,
+    #root.ready + #static-shell {
+      display: none !important;
     }
 
     /* ── NAV ─────────────────────────────────────────────── */
@@ -329,9 +340,9 @@
       </div>
     </div>
     <div class="s-nav-btns">
-      <a href="/#/app/dashboard"        onclick="goTo('/#/app/dashboard');return false;"        class="btn btn-gold"          style="font-size:11px;padding:.45rem .9rem;">⚡ Dashboard</a>
-      <a href="/#/driver-app"           onclick="goTo('/#/driver-app');return false;"           class="btn btn-outline-green" style="font-size:11px;padding:.45rem .9rem;">🚗 Driver</a>
-      <a href="/#/fleet-controller-pwa" onclick="goTo('/#/fleet-controller-pwa');return false;" class="btn btn-outline-purple" style="font-size:11px;padding:.45rem .9rem;">📡 Controller</a>
+      <a id="shell-btn-dashboard" href="/#/app/dashboard" onclick="goTo('/#/app/dashboard');return false;" class="btn btn-gold" style="font-size:11px;padding:.45rem .9rem;">⚡ Dashboard</a>
+      <a id="shell-btn-driver" href="/#/driver-app" onclick="goTo('/#/driver-app');return false;" class="btn btn-outline-green" style="font-size:11px;padding:.45rem .9rem;">🚗 Driver</a>
+      <a id="shell-btn-controller" href="/#/fleet-controller-pwa" onclick="goTo('/#/fleet-controller-pwa');return false;" class="btn btn-outline-purple" style="font-size:11px;padding:.45rem .9rem;">📡 Controller</a>
     </div>
   </nav>
 
@@ -595,7 +606,12 @@ window.addEventListener('beforeinstallprompt', function(e) {
     if (!root || !root.children.length) return;
     done = true;
     var shell = document.getElementById('static-shell');
-    if (shell) shell.classList.add('gone');
+    if (shell) {
+      shell.classList.add('gone');
+      shell.style.display = 'none';
+      shell.style.pointerEvents = 'none';
+      shell.setAttribute('aria-hidden', 'true');
+    }
     root.classList.add('ready');
     if (window.__shellObs) window.__shellObs.disconnect();
   }
