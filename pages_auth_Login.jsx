@@ -14,7 +14,7 @@ import { authService } from './services_supabase_authService'
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const from     = location.state?.from?.pathname || '/dashboard'
+  const from     = location.state?.from?.pathname || '/app/dashboard'
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')

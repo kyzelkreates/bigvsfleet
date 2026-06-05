@@ -245,7 +245,7 @@ export default function Landing() {
     navigate(path)
   }
 
-  const openDashboard = () => markSeenAndGo('/dashboard')
+  const openDashboard = () => markSeenAndGo('/app/dashboard')
 
   const installDashboard = async () => {
     if (prompt) { await trigger(); return }
@@ -597,6 +597,425 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: THE CORE CONCEPT
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-gradient-to-b from-[#050810] to-[#03060e]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="Lightbulb" size={11} />
+              The Concept
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              Navigation Built Around Vehicle Reality
+            </h2>
+            <p className="text-slate-400 text-base max-w-3xl mx-auto leading-relaxed">
+              A route should not just be based on the shortest or fastest path. For fleet and specialist vehicle use,
+              a route should also consider the vehicle, the driver, the job, the restrictions, the evidence,
+              and the safety and legal context around the journey.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
+            {[
+              { icon: 'Map', color: 'amber', title: 'Beyond A to B', body: 'Most navigation tools are designed to get a user from A to B. Big V\'s Best Routes™ Fleet is designed to support safer, more accountable fleet movement.' },
+              { icon: 'Layers', color: 'cyan', title: 'Structured Workflow', body: 'Combining route planning, vehicle profiles, driver PWA workflows, dashboard oversight, advisory AI checks, trip evidence, and backend-ready architecture.' },
+              { icon: 'ShieldCheck', color: 'emerald', title: 'From Map to Decision', body: 'This turns routing from a basic map instruction into a structured safety, compliance-awareness, and operational visibility workflow.' },
+            ].map(c => (
+              <div key={c.title} className={`p-6 rounded-2xl border border-${c.color}-500/15 bg-${c.color}-500/4`}>
+                <div className={`w-10 h-10 rounded-xl bg-${c.color}-500/10 border border-${c.color}-500/20 flex items-center justify-center mb-4`}>
+                  <Ico name={c.icon} size={18} className={`text-${c.color}-400`} />
+                </div>
+                <h3 className="font-display font-semibold text-white text-base mb-2">{c.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{c.body}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-5 rounded-2xl border border-slate-700/30 bg-slate-800/20">
+            <p className="text-slate-400 text-sm text-center leading-relaxed">
+              <strong className="text-amber-400">Big V's Best Routes™ Fleet</strong> is not positioned as another consumer sat nav.
+              It is positioned as a safety-first fleet routing and operational visibility platform. The value is not only in plotting a route —
+              the value is in checking the context around the route, guiding the driver workflow, keeping the controller informed,
+              recording evidence, and helping teams make better human-reviewed decisions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: WHY STANDARD NAV IS NOT ENOUGH
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-[#03060e]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-orange-500/20 bg-orange-500/5 text-orange-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="AlertCircle" size={11} />
+              The Gap
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              Why Standard Navigation Is Not Enough<br className="hidden sm:block" /> For Fleet Safety
+            </h2>
+            <p className="text-slate-400 text-base max-w-3xl mx-auto leading-relaxed">
+              Many mainstream satellite navigation and map platforms are excellent for everyday point-to-point navigation,
+              but they are not usually designed as complete fleet safety and legal-compliance support systems.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            {[
+              'Limited vehicle-specific suitability checks',
+              'Missing legal-critical vehicle detail prompts',
+              'No structured evidence trail for route decisions',
+              'No built-in dashboard-to-driver accountability workflow',
+              'No advisory AI layer reviewing route risk and missing information',
+              'No unified system combining route assignment, PWA navigation, driver acknowledgement, safety prompts, incident notes, and backend sync',
+              'No clear demo/live product pathway for fleet operators',
+              'No compliance-aware reporting in a single connected product',
+            ].map((gap, i) => (
+              <div key={i} className="flex items-start gap-3 p-4 rounded-xl border border-orange-500/10 bg-orange-500/3">
+                <div className="w-5 h-5 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Ico name="X" size={10} className="text-orange-400" />
+                </div>
+                <p className="text-slate-400 text-sm leading-relaxed">{gap}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-5 rounded-2xl border border-emerald-500/15 bg-emerald-500/4 text-center">
+            <p className="text-slate-300 text-sm leading-relaxed">
+              <strong className="text-emerald-400">Big V's Best Routes™ Fleet</strong> is positioned differently.
+              It is not just trying to show a route. It is designed to support the full route decision workflow <em>around</em> the route —
+              from vehicle profile and driver assignment through to trip evidence, incident notes, and advisory compliance checks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: THE SAFETY-FIRST DIFFERENCE
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-gradient-to-b from-[#03060e] to-[#050810]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="ShieldCheck" size={11} />
+              The Difference
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              The Safety-First Difference
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+            {/* Standard nav */}
+            <div className="p-6 rounded-2xl border border-slate-700/40 bg-slate-800/15">
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-8 h-8 rounded-lg bg-slate-700/30 border border-slate-700/40 flex items-center justify-center">
+                  <Ico name="Navigation" size={15} className="text-slate-400" />
+                </div>
+                <h3 className="font-display font-semibold text-slate-300 text-base">Standard Navigation Focus</h3>
+              </div>
+              <ul className="space-y-2.5">
+                {['Fastest route','Shortest route','Basic traffic view','General driver directions','Consumer-first journey guidance'].map(i => (
+                  <li key={i} className="flex items-center gap-2.5 text-sm text-slate-500">
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-600 flex-shrink-0" />
+                    {i}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Big V focus */}
+            <div className="p-6 rounded-2xl border border-amber-500/20 bg-amber-500/4">
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                  <Ico name="ShieldCheck" size={15} className="text-amber-400" />
+                </div>
+                <h3 className="font-display font-semibold text-white text-base">Big V's Best Routes™ Fleet Focus</h3>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  'Vehicle profile awareness',
+                  'Route suitability checks',
+                  'Missing legal-critical field warnings',
+                  'Driver PWA assignment flow',
+                  'Fleet dashboard visibility',
+                  'Advisory Route Safety AI',
+                  'Advisory Legal & Compliance AI',
+                  'Trip evidence and reporting',
+                  'Demo/live backend-ready structure',
+                  'Human-reviewed safety decisions',
+                ].map(i => (
+                  <li key={i} className="flex items-center gap-2.5 text-sm text-emerald-300/80">
+                    <Ico name="Check" size={12} className="text-emerald-400 flex-shrink-0" />
+                    {i}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl border border-amber-500/10 bg-amber-500/3">
+            <p className="text-slate-500 text-xs text-center leading-relaxed">
+              <strong className="text-amber-400/80">Important:</strong> Big V's Best Routes™ Fleet does not claim to replace
+              official legal checks, transport manager responsibility, driver judgement, or approved routing data. It adds an
+              advisory safety and evidence layer around the route so better decisions can be made with clearer information.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: INVESTOR POTENTIAL
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-[#050810]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/5 text-violet-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="TrendingUp" size={11} />
+              Investor Potential
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              Why This Could Be Valuable
+            </h2>
+            <p className="text-slate-400 text-base max-w-3xl mx-auto leading-relaxed">
+              Big V's Best Routes™ Fleet demonstrates a working product direction — not just a visual prototype. It shows dashboard logic,
+              installable PWA structure, route workflow, AI oversight concepts, demo/live switching, and a clear path toward operational deployment.
+            </p>
+          </div>
+
+          {/* Product positioning statement */}
+          <div className="p-6 rounded-2xl border border-violet-500/15 bg-violet-500/4 mb-10 text-center">
+            <p className="text-slate-300 text-sm leading-relaxed max-w-3xl mx-auto">
+              Fleet routing is not only a map problem. It is a <strong className="text-violet-300">safety</strong>, <strong className="text-violet-300">responsibility</strong>, <strong className="text-violet-300">evidence</strong>, <strong className="text-violet-300">vehicle suitability</strong>, <strong className="text-violet-300">driver communication</strong>, and <strong className="text-violet-300">operational control</strong> problem.
+              Big V's Best Routes™ Fleet is designed to sit in that gap — bringing together the map, vehicle, driver, controller, safety checks,
+              evidence trail, and advisory 4P3X Intelligent AI™ oversight into one connected product direction.
+            </p>
+          </div>
+
+          {/* Markets */}
+          <h3 className="font-display font-semibold text-slate-300 text-lg text-center mb-6">Markets It Can Serve</h3>
+          <div className="flex flex-wrap justify-center gap-2.5 mb-10">
+            {[
+              'Delivery Fleets','Van Fleets','HGV Support Workflows','Recovery Services',
+              'Council & Community Transport','Utility & Maintenance Teams','Specialist Vehicle Operators',
+              'Construction & Site Transport','Mobile Care & Support Fleets','Courier & Logistics Teams',
+              'White-Label Fleet Software Providers','Mobile Workforce Management',
+            ].map(m => (
+              <span key={m} className="px-3 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/5 text-violet-300/70 text-xs font-medium">
+                {m}
+              </span>
+            ))}
+          </div>
+
+          {/* Growth paths */}
+          <h3 className="font-display font-semibold text-slate-300 text-lg text-center mb-6">How It Could Grow</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { icon: 'RefreshCw', label: 'SaaS Subscriptions' },
+              { icon: 'Tag', label: 'White-Label Licensing' },
+              { icon: 'Truck', label: 'Per-Fleet Setup' },
+              { icon: 'Users', label: 'Per-Driver Pricing' },
+              { icon: 'FileText', label: 'Compliance Add-Ons' },
+              { icon: 'Building2', label: 'Enterprise Deployments' },
+              { icon: 'Wrench', label: 'Custom Workflow Builds' },
+              { icon: 'Globe', label: 'Public Sector Pilots' },
+              { icon: 'Star', label: 'Specialist Packages' },
+              { icon: 'Code2', label: 'API / Integration Tier' },
+            ].map(g => (
+              <div key={g.label} className="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-700/30 bg-slate-800/15 text-center">
+                <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/15 flex items-center justify-center">
+                  <Ico name={g.icon} size={14} className="text-violet-400" />
+                </div>
+                <span className="text-slate-400 text-xs font-medium leading-tight">{g.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: POSSIBLE REVENUE MODELS
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-gradient-to-b from-[#050810] to-[#03060e]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-cyan-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="DollarSign" size={11} />
+              Revenue Models
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              Possible Revenue Models
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                icon: 'RefreshCw', color: 'cyan', title: 'Fleet SaaS Subscription',
+                body: 'Monthly or annual subscription for small, medium, and larger fleet operators. Recurring revenue model with tiered feature access.',
+              },
+              {
+                icon: 'Sliders', color: 'emerald', title: 'Per Vehicle / Per Driver',
+                body: 'Pricing scales with the number of active vehicles, drivers, or installed PWAs. Grows naturally as the customer\'s fleet grows.',
+              },
+              {
+                icon: 'Layers', color: 'violet', title: 'White-Label Fleet Platform',
+                body: 'Other businesses or consultants brand the system for their own fleet clients. "Powered by 4P3X Intelligent AI™ — Created by Kyzel Kreates™" retained where required.',
+              },
+              {
+                icon: 'Settings', color: 'amber', title: 'Setup & Configuration Service',
+                body: 'A paid onboarding package to configure vehicle types, route workflows, backend provider, dashboard settings, PWA deployment, and safety prompts.',
+              },
+              {
+                icon: 'Truck', color: 'orange', title: 'Specialist Sector Versions',
+                body: 'Separate variants for councils, recovery operators, mobile care teams, construction vehicles, utility fleets, or specialist transport.',
+              },
+              {
+                icon: 'Building2', color: 'pink', title: 'Enterprise / Custom Build',
+                body: 'Custom dashboard, backend, reporting, and AI oversight extensions for larger organisations. Priced case by case based on scope.',
+              },
+            ].map(m => (
+              <div key={m.title} className={`p-6 rounded-2xl border border-${m.color}-500/15 bg-${m.color}-500/4`}>
+                <div className={`w-10 h-10 rounded-xl bg-${m.color}-500/10 border border-${m.color}-500/20 flex items-center justify-center mb-4`}>
+                  <Ico name={m.icon} size={18} className={`text-${m.color}-400`} />
+                </div>
+                <h3 className="font-display font-semibold text-white text-base mb-2">{m.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{m.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: ILLUSTRATIVE COMMERCIAL POTENTIAL
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-[#03060e]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="BarChart3" size={11} />
+              Illustrative Only
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              Illustrative Commercial Potential
+            </h2>
+          </div>
+
+          {/* Mandatory disclaimer */}
+          <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/4 mb-10">
+            <p className="text-amber-300/70 text-xs text-center leading-relaxed">
+              <strong className="text-amber-300">Illustrative examples only.</strong> These are not financial guarantees, forecasts, or investment advice.
+              Actual revenue would depend on product completion, backend implementation, testing, compliance review, customer acquisition,
+              pricing, retention, support costs, legal review, and market demand.
+            </p>
+          </div>
+
+          {/* Pricing tiers */}
+          <h3 className="font-display font-semibold text-slate-300 text-base mb-5 text-center">Illustrative Pricing Ranges</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            {[
+              { tier: 'Small Fleet', range: '£49–£149/mo', desc: 'Per month package' },
+              { tier: 'Growing Fleet', range: '£199–£499/mo', desc: 'Per month package' },
+              { tier: 'Specialist Fleet', range: '£500–£1,500+/mo', desc: 'Compliance-support tier' },
+              { tier: 'White-Label / Enterprise', range: '£1,500–£10,000+', desc: 'Setup or project basis' },
+            ].map(t => (
+              <div key={t.tier} className="p-5 rounded-2xl border border-slate-700/30 bg-slate-800/15 text-center">
+                <p className="text-slate-500 text-xs mb-2">{t.tier}</p>
+                <p className="font-display font-bold text-white text-lg mb-1">{t.range}</p>
+                <p className="text-slate-600 text-xs">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Scenario cards */}
+          <h3 className="font-display font-semibold text-slate-300 text-base mb-5 text-center">Illustrative Scenario Examples</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            {[
+              { label: 'Scenario A', detail: '10 small fleet customers at £99/month', result: '£990/month recurring', color: 'emerald' },
+              { label: 'Scenario B', detail: '25 growing fleet customers at £299/month', result: '£7,475/month recurring', color: 'cyan' },
+              { label: 'Scenario C', detail: '10 specialist fleet customers at £999/month', result: '£9,990/month recurring', color: 'violet' },
+              { label: 'Scenario D', detail: '5 white-label/custom setup projects at £5,000 each', result: '£25,000 project revenue', color: 'amber' },
+            ].map(s => (
+              <div key={s.label} className={`p-5 rounded-2xl border border-${s.color}-500/15 bg-${s.color}-500/4`}>
+                <p className={`text-${s.color}-400 text-xs font-semibold uppercase tracking-wider mb-2`}>{s.label} — Illustrative</p>
+                <p className="text-slate-400 text-sm mb-3">{s.detail}</p>
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-${s.color}-500/10 border border-${s.color}-500/20`}>
+                  <Ico name="TrendingUp" size={11} className={`text-${s.color}-400`} />
+                  <span className={`text-${s.color}-300 text-sm font-bold`}>{s.result}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-slate-600 text-xs text-center italic">
+            All figures above are illustrative examples only. They are not commitments, forecasts, or financial projections of any kind.
+          </p>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION: WHY THIS COULD MATTER + SAFETY BOUNDARY
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 bg-gradient-to-b from-[#03060e] to-[#050810]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400/80 text-2xs font-semibold tracking-widest uppercase mb-5">
+              <Ico name="Star" size={11} />
+              Why It Matters
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-6">
+              Why This Could Matter
+            </h2>
+            <p className="text-slate-300 text-base max-w-3xl mx-auto leading-relaxed mb-6">
+              Fleet routing is not only a map problem. It is a <strong className="text-amber-400">safety</strong>, <strong className="text-amber-400">responsibility</strong>, <strong className="text-amber-400">evidence</strong>, vehicle suitability, driver communication, and operational control problem.
+            </p>
+            <p className="text-slate-400 text-base max-w-3xl mx-auto leading-relaxed">
+              Big V's Best Routes™ Fleet is designed to sit in that gap — bringing together the map, the vehicle, the driver, the controller,
+              the safety checks, the evidence trail, and advisory 4P3X Intelligent AI™ oversight into one connected product direction.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            {[
+              { icon: 'Presentation', color: 'violet', label: 'Investor Demo Ready', body: 'A working product direction with logic, PWA structure, AI concepts, demo/live switching, and deployment readiness.' },
+              { icon: 'Users', color: 'cyan', label: 'Pilot Discussions', body: 'Suitable for fleet operator feedback, pilot conversations, and grant or funding discussions.' },
+              { icon: 'Code2', color: 'amber', label: 'Product Dev Path', body: 'Clear architecture for connecting a real backend, adding live users, and scaling to operational deployment.' },
+              { icon: 'Globe', color: 'emerald', label: 'Multi-Sector Applicable', body: 'Councils, logistics, specialists, mobile care, construction, recovery — the concept adapts to many fleet use cases.' },
+            ].map(c => (
+              <div key={c.label} className={`p-5 rounded-2xl border border-${c.color}-500/15 bg-${c.color}-500/4 text-center`}>
+                <div className={`w-10 h-10 rounded-xl bg-${c.color}-500/10 border border-${c.color}-500/20 flex items-center justify-center mx-auto mb-3`}>
+                  <Ico name={c.icon} size={17} className={`text-${c.color}-400`} />
+                </div>
+                <h3 className="font-display font-semibold text-white text-sm mb-2">{c.label}</h3>
+                <p className="text-slate-500 text-xs leading-relaxed">{c.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Safety boundary reinforced */}
+          <div className="p-6 rounded-2xl border border-amber-500/15 bg-amber-500/3">
+            <div className="flex items-center gap-2.5 mb-3">
+              <Ico name="ShieldAlert" size={16} className="text-amber-400 flex-shrink-0" />
+              <h3 className="font-display font-semibold text-amber-300 text-sm">Safety Boundary — Always Clear</h3>
+            </div>
+            <p className="text-slate-500 text-sm leading-relaxed">
+              Big V's Best Routes™ Fleet is advisory and safety-supporting software. It does not guarantee legal compliance, route legality,
+              road suitability, or journey safety. Drivers, fleet operators, transport managers, and organisations remain responsible for
+              checking official restrictions, obeying road laws, using professional judgement, and making all final decisions.
+              The 4P3X Intelligent AI™ agents provide advisory guidance only — they do not replace human responsibility, legal advice,
+              transport manager duties, or official compliance checks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+
 
       {/* ════════════════════════════════════════════════════════
           FOOTER

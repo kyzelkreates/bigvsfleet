@@ -20,7 +20,7 @@ export default function NotFound() {
         <p className="text-slate-400 text-sm">Route not found in Big V's Best Routes™</p>
       </div>
       <button
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate('/app/dashboard')}
         className="btn-primary"
       >
         <Icon name="Home" size={14} />

@@ -113,7 +113,7 @@ function UserMenu({ user, roleLabel, signOut }) {
                 My Profile
               </button>
               <button
-                onClick={() => { navigate('/settings'); setOpen(false) }}
+                onClick={() => { navigate('/app/settings'); setOpen(false) }}
                 className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800/40 transition-colors"
               >
                 <Icon name="Settings" size={14} />

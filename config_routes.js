@@ -12,23 +12,23 @@ export const ROLES = {
 
 // ─── Route Role Map ───────────────────────────────────────────
 export const ROUTE_ROLES = {
-  '/dashboard':           ROLES.FLEET_ADMIN,
-  '/fleet':               ROLES.FLEET_ADMIN,
-  '/drivers':             ROLES.FLEET_ADMIN,
-  '/vehicles':            ROLES.FLEET_ADMIN,
-  '/dispatch':            ROLES.FLEET_ADMIN,
-  '/navigation':          ROLES.FLEET_ADMIN,
-  '/ai':                  ROLES.FLEET_ADMIN,
-  '/safety':              ROLES.FLEET_ADMIN,
-  '/compliance':          ROLES.FLEET_ADMIN,
-  '/analytics':           ROLES.FLEET_ADMIN,
-  '/incidents':           ROLES.FLEET_ADMIN,
-  '/messaging':           ROLES.FLEET_ADMIN,
-  '/reports':             ROLES.FLEET_ADMIN,
-  '/pwa-deployment':      ROLES.FLEET_ADMIN,
-  '/api-settings':        ROLES.FLEET_ADMIN,
-  '/backend-settings':    ROLES.FLEET_ADMIN,
-  '/settings':            ROLES.FLEET_ADMIN,
+  '/app/dashboard':           ROLES.FLEET_ADMIN,
+  '/app/fleet':               ROLES.FLEET_ADMIN,
+  '/app/drivers':             ROLES.FLEET_ADMIN,
+  '/app/vehicles':            ROLES.FLEET_ADMIN,
+  '/app/dispatch':            ROLES.FLEET_ADMIN,
+  '/app/navigation':          ROLES.FLEET_ADMIN,
+  '/app/ai':                  ROLES.FLEET_ADMIN,
+  '/app/safety':              ROLES.FLEET_ADMIN,
+  '/app/compliance':          ROLES.FLEET_ADMIN,
+  '/app/analytics':           ROLES.FLEET_ADMIN,
+  '/app/incidents':           ROLES.FLEET_ADMIN,
+  '/app/messaging':           ROLES.FLEET_ADMIN,
+  '/app/reports':             ROLES.FLEET_ADMIN,
+  '/app/pwa-deployment':      ROLES.FLEET_ADMIN,
+  '/app/api-settings':        ROLES.FLEET_ADMIN,
+  '/app/backend-settings':    ROLES.FLEET_ADMIN,
+  '/app/settings':            ROLES.FLEET_ADMIN,
   '/driver-app':          ROLES.DRIVER,
   '/ap3x':                ROLES.DRIVER,
   '/fleet-controller-pwa': ROLES.FLEET_CONTROLLER,
@@ -44,70 +44,70 @@ export const ROUTE_ROLES = {
 export const ROUTES = {
   // ── Core ──────────────────────────────────────────────────
   ROOT:       '/',
-  DASHBOARD:  '/dashboard',
+  DASHBOARD:  '/app/dashboard',
 
   // ── Fleet ─────────────────────────────────────────────────
-  FLEET:          '/fleet',
-  FLEET_VEHICLE:  '/fleet/:vehicleId',
+  FLEET:          '/app/fleet',
+  FLEET_VEHICLE:  '/app/fleet/:vehicleId',
 
   // ── Drivers ───────────────────────────────────────────────
-  DRIVERS:         '/drivers',
-  DRIVER_PROFILE:  '/drivers/:driverId',
+  DRIVERS:         '/app/drivers',
+  DRIVER_PROFILE:  '/app/drivers/:driverId',
 
   // ── Vehicles ──────────────────────────────────────────────
-  VEHICLES:        '/vehicles',
-  VEHICLE_DETAIL:  '/vehicles/:vehicleId',
+  VEHICLES:        '/app/vehicles',
+  VEHICLE_DETAIL:  '/app/vehicles/:vehicleId',
 
   // ── Dispatch ──────────────────────────────────────────────
-  DISPATCH: '/dispatch',
+  DISPATCH: '/app/dispatch',
 
   // ── Driver Setup ──────────────────────────────────────────
-  DRIVER_SETUP: '/driver-setup',
+  DRIVER_SETUP: '/app/driver-setup',
 
   // ── Navigation / AP3X ─────────────────────────────────────
-  NAVIGATION: '/navigation',
+  NAVIGATION: '/app/navigation',
   AP3X:       '/ap3x',
 
   // ── AI Intelligence ───────────────────────────────────────
-  AI: '/ai',    // Run 15
+  AI: '/app/ai',    // Run 15
 
   // ── Compliance ────────────────────────────────────────────
-  COMPLIANCE: '/compliance',
+  COMPLIANCE: '/app/compliance',
 
   // ── Safety AI ─────────────────────────────────────────────
-  SAFETY: '/safety',
+  SAFETY: '/app/safety',
 
   // ── Analytics ─────────────────────────────────────────────
-  ANALYTICS: '/analytics',
+  ANALYTICS: '/app/analytics',
 
   // ── Incidents ─────────────────────────────────────────────
-  INCIDENTS:        '/incidents',
-  INCIDENT_DETAIL:  '/incidents/:incidentId',
+  INCIDENTS:        '/app/incidents',
+  INCIDENT_DETAIL:  '/app/incidents/:incidentId',
 
   // ── Messaging ─────────────────────────────────────────────
-  MESSAGING: '/messaging',
+  MESSAGING: '/app/messaging',
 
   // ── Settings ──────────────────────────────────────────────
-  SETTINGS:               '/settings',
-  SETTINGS_PROFILE:       '/settings/profile',
-  SETTINGS_FLEET:         '/settings/fleet',
-  SETTINGS_AI:            '/settings/ai',
-  SETTINGS_SECURITY:      '/settings/security',
-  SETTINGS_INTEGRATIONS:  '/settings/integrations',
+  SETTINGS:               '/app/settings',
+  SETTINGS_PROFILE:       '/app/settings/profile',
+  SETTINGS_FLEET:         '/app/settings/fleet',
+  SETTINGS_AI:            '/app/settings/ai',
+  SETTINGS_SECURITY:      '/app/settings/security',
+  SETTINGS_INTEGRATIONS:  '/app/settings/integrations',
 
 
   // ── Reports ───────────────────────────────────────────────
-  REPORTS: '/reports',
+  REPORTS: '/app/reports',
 
   // ── PWA Deployment Centre ─────────────────────────────────
-  PWA_DEPLOYMENT: '/pwa-deployment',
+  PWA_DEPLOYMENT: '/app/pwa-deployment',
 
   // ── Fleet Controller PWA ──────────────────────────────────
   FLEET_CONTROLLER: '/fleet-controller-pwa',
 
   // ── API / Backend Settings (reserved — Run 3/4) ───────────
-  API_SETTINGS:     '/api-settings',
-  BACKEND_SETTINGS: '/backend-settings',
+  API_SETTINGS:     '/app/api-settings',
+  BACKEND_SETTINGS: '/app/backend-settings',
 
   // ── Driver PWA alias (routes/driver-app already registered) 
   DRIVER_PWA: '/driver-app',

@@ -83,37 +83,37 @@ const LoginOrSetup = ({ element }) =>
 // ─── Router ───────────────────────────────────────────────────
 export const router = createHashRouter([
 
-  // ── LANDING PAGE (always public) ────────────────────────────
-  { path: '/landing',            element: <Landing /> },
+  // ── HOME: Landing page (always public — the home page) ──────
+  { path: '/',                      element: <Landing /> },
+  // Legacy /landing alias → redirect to /
+  { path: '/landing',               element: <Navigate to="/" replace /> },
 
   // ── First-run Setup (public) ──────────────────────────────
-  { path: '/auth/setup',         element: <Setup /> },
+  { path: '/auth/setup',            element: <Setup /> },
 
   // ── Auth Routes (public) ──────────────────────────────────
-  { path: '/auth/login',         element: <LoginOrSetup element={<Login />} /> },
-  { path: '/auth/driver',        element: <LoginOrSetup element={<DriverLogin />} /> },
-  { path: '/auth/reset-confirm', element: <ResetConfirm /> },
+  { path: '/auth/login',            element: <LoginOrSetup element={<Login />} /> },
+  { path: '/auth/driver',           element: <LoginOrSetup element={<DriverLogin />} /> },
+  { path: '/auth/reset-confirm',    element: <ResetConfirm /> },
 
   // ── Standalone Driver Routes (public — no admin controls) ──
-  { path: '/driver-import',      element: <DriverImport /> },
-  { path: '/driver-app',         element: <DriverApp /> },    // Full Driver PWA
-  { path: '/ap3x',               element: <AP3X /> },         // AP3X Driver Platform
+  { path: '/driver-import',         element: <DriverImport /> },
+  { path: '/driver-app',            element: <DriverApp /> },
+  { path: '/ap3x',                  element: <AP3X /> },
 
-  // ── Fleet Controller PWA (standalone — no admin controls) ─
-  // RUN 2: shell stub — full controller actions in Run 7
-  { path: '/fleet-controller-pwa', element: <FleetControllerPwa /> },
+  // ── Fleet Controller PWA (standalone) ─────────────────────
+  { path: '/fleet-controller-pwa',  element: <FleetControllerPwa /> },
 
-  // ── Protected Fleet Dashboard Shell ───────────────────────
+  // ── Protected Fleet Dashboard Shell (at /app/*) ───────────
   {
-    path: '/',
+    path: '/app',
     element: (
       <AuthGuard>
         <AppShell />
       </AuthGuard>
     ),
     children: [
-      // /app root → dashboard (or setup on first run)
-      { index: true, element: <RootRedirect /> },
+      { index: true, element: <DashboardRoot /> },
 
       // ── Core ──────────────────────────────────────────────
       { path: 'dashboard',              element: <Dashboard /> },
@@ -130,7 +130,6 @@ export const router = createHashRouter([
 
       // ── Navigation / Map ──────────────────────────────────
       { path: 'navigation',             element: <Navigation /> },
-      // Alias for routes/map target from Run 2 spec
       { path: 'routes',                 element: <Navigation /> },
       { path: 'map',                    element: <Navigation /> },
 
@@ -144,16 +143,36 @@ export const router = createHashRouter([
       { path: 'incidents',              element: <Incidents /> },
       { path: 'incidents/:incidentId',  element: <Incidents /> },
       { path: 'messaging',              element: <Messaging /> },
-      { path: 'reports',                element: <Reports /> },         // RUN 2
+      { path: 'reports',                element: <Reports /> },
 
       // ── System ────────────────────────────────────────────
       { path: 'settings',               element: <Settings /> },
       { path: 'settings/:section',      element: <Settings /> },
-      { path: 'pwa-deployment',         element: <PwaDeployment /> },   // RUN 2
-      { path: 'api-settings',           element: <ApiSettings /> },     // RUN 2
-      { path: 'backend-settings',       element: <BackendSettings /> }, // RUN 2
+      { path: 'pwa-deployment',         element: <PwaDeployment /> },
+      { path: 'api-settings',           element: <ApiSettings /> },
+      { path: 'backend-settings',       element: <BackendSettings /> },
     ]
   },
+
+  // ── Legacy /dashboard → /app/dashboard ────────────────────
+  { path: '/dashboard',             element: <Navigate to="/app/dashboard" replace /> },
+  { path: '/fleet',                 element: <Navigate to="/app/fleet" replace /> },
+  { path: '/drivers',               element: <Navigate to="/app/drivers" replace /> },
+  { path: '/vehicles',              element: <Navigate to="/app/vehicles" replace /> },
+  { path: '/dispatch',              element: <Navigate to="/app/dispatch" replace /> },
+  { path: '/navigation',            element: <Navigate to="/app/navigation" replace /> },
+  { path: '/routes',                element: <Navigate to="/app/routes" replace /> },
+  { path: '/safety',                element: <Navigate to="/app/safety" replace /> },
+  { path: '/compliance',            element: <Navigate to="/app/compliance" replace /> },
+  { path: '/analytics',             element: <Navigate to="/app/analytics" replace /> },
+  { path: '/incidents',             element: <Navigate to="/app/incidents" replace /> },
+  { path: '/messaging',             element: <Navigate to="/app/messaging" replace /> },
+  { path: '/reports',               element: <Navigate to="/app/reports" replace /> },
+  { path: '/settings',              element: <Navigate to="/app/settings" replace /> },
+  { path: '/pwa-deployment',        element: <Navigate to="/app/pwa-deployment" replace /> },
+  { path: '/api-settings',          element: <Navigate to="/app/api-settings" replace /> },
+  { path: '/backend-settings',      element: <Navigate to="/app/backend-settings" replace /> },
+  { path: '/ai',                    element: <Navigate to="/app/ai" replace /> },
 
   // ── 404 ───────────────────────────────────────────────────
   { path: '*', element: <NotFound /> }

@@ -1335,21 +1335,21 @@ export default function ApiSettings() {
         {/* Bottom nav */}
         <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-slate-800/60">
           <button
-            onClick={() => navigate('/backend-settings')}
+            onClick={() => navigate('/app/backend-settings')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors text-sm"
           >
             <Icon name="Database" size={14} />
             Backend Settings
           </button>
           <button
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/app/settings')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors text-sm"
           >
             <Icon name="Settings" size={14} />
             Settings
           </button>
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/app/dashboard')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors text-sm"
           >
             <Icon name="ArrowLeft" size={14} />

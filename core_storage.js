@@ -156,6 +156,13 @@ export const useAuthStore = create((set) => ({
   role:          persist.get(STORAGE_KEYS.AUTH_ROLE, null),
   isLoading:     false,
   isAuthenticated: false,
+  // demoPublicAccess: true = allow through AuthGuard in demo mode (no login needed)
+  // Defaults to TRUE on fresh deploy so demo/investor visitors are never blocked
+  // Set to false to enforce real authentication for live deployments
+  demoPublicAccess: (() => {
+    const stored = localStorage.getItem('bigv:config:demoPublicAccess')
+    return stored === null ? true : stored === 'true'
+  })(),
 
   // ── Actions ──
   setSession: (session) => {

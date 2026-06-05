@@ -766,7 +766,7 @@ export default function Navigation() {
           <span className="hidden sm:inline">Status</span>
         </button>
 
-        <button onClick={() => navigate('/dashboard')}
+        <button onClick={() => navigate('/app/dashboard')}
           className="flex items-center gap-1.5
                      bg-[#0d1426]/95 border border-slate-700/60 text-slate-300
                      hover:text-white hover:border-slate-500/80 hover:bg-slate-800/80
