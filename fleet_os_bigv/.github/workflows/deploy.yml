@@ -1,0 +1,60 @@
+name: Build & Deploy → Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ── 1. Source ──────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. Node ───────────────────────────────────────────────
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── 3. Dependencies ───────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Build ──────────────────────────────────────────────
+      - name: Build (Vite)
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL:       ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY:  ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_OPENAI_KEY:         ${{ secrets.VITE_OPENAI_KEY }}
+          VITE_OPENROUTER_KEY:     ${{ secrets.VITE_OPENROUTER_KEY }}
+          VITE_GROQ_KEY:           ${{ secrets.VITE_GROQ_KEY }}
+          VITE_DEEPSEEK_KEY:       ${{ secrets.VITE_DEEPSEEK_KEY }}
+          VITE_MISTRAL_KEY:        ${{ secrets.VITE_MISTRAL_KEY }}
+          VITE_ANTHROPIC_KEY:      ${{ secrets.VITE_ANTHROPIC_KEY }}
+          VITE_GEMINI_KEY:         ${{ secrets.VITE_GEMINI_KEY }}
+          VITE_GRAPHHOPPER_KEY:    ${{ secrets.VITE_GRAPHHOPPER_KEY }}
+          VITE_GOOGLE_MAPS_KEY:    ${{ secrets.VITE_GOOGLE_MAPS_KEY }}
+
+      # ── 5. Vercel CLI deploy ───────────────────────────────────
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel project settings
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Deploy to Vercel (production)
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
