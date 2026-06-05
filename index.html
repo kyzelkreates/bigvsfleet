@@ -30,61 +30,58 @@
       --text:   #f1f5f9;
     }
 
-    /* ── FIX 1: full-page scroll on all devices ─────────── */
+    /* ── BASE: full-page scroll on ALL devices ────────────── */
     html {
       background: var(--bg);
-      overflow-y: scroll;   /* always show scrollbar gutter — prevents layout shift */
+      overflow-y: scroll;
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
+      height: 100%;
     }
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Inter', system-ui, sans-serif;
-      min-height: 100vh;
-      width: 100%;           /* FIX 2: desktop full-width */
+      min-height: 100%;
+      width: 100%;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      -webkit-overflow-scrolling: touch;  /* iOS momentum scroll */
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Shell visible by default */
+    /* ── REACT ROOT — hidden until React mounts ─────────── */
+    #root { display: none; }
+    #root.ready { display: block; min-height: 100vh; }
+
+    /* ── STATIC SHELL — full height, never clips scroll ─── */
     #static-shell {
       display: block;
       width: 100%;
-      min-height: 100vh;
-      overflow: visible;     /* never clip the shell — was blocking scroll */
       opacity: 1;
       transition: opacity .25s ease;
     }
-    #static-shell.hidden {
-      opacity: 0;
-      pointer-events: none;
-      position: absolute;
-      width: 0; height: 0;
-      overflow: hidden;
+    #static-shell.gone {
+      display: none;
     }
-    #root { display: none; }
-    #root.ready { display: block; }
 
     /* ── NAV ─────────────────────────────────────────────── */
     .s-nav {
       position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 1.5rem; height: 56px;
-      background: rgba(10,15,30,.92);
-      backdrop-filter: blur(12px);
+      padding: 0 1.5rem; height: 56px; width: 100%;
+      background: rgba(10,15,30,.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
-      width: 100%;
     }
-    .s-logo { display: flex; align-items: center; gap: .6rem; }
+    .s-logo { display: flex; align-items: center; gap: .6rem; min-width: 0; }
     .s-logo-badge {
-      width: 30px; height: 30px; border-radius: 8px;
+      width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
       background: linear-gradient(135deg,#f59e0b,#d97706);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 12px; color: #000; flex-shrink: 0;
+      font-weight: 800; font-size: 12px; color: #000;
     }
-    .s-logo-text { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .s-logo-text { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; white-space: nowrap; }
     .s-logo-sub  { font-size: 9.5px; color: var(--muted); display: none; }
     @media(min-width:600px){ .s-logo-sub { display: block; } }
     .s-nav-btns { display: flex; gap: .4rem; flex-shrink: 0; }
@@ -97,18 +94,19 @@
       border: 1px solid transparent; text-decoration: none;
       transition: all .15s ease; white-space: nowrap;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
     .btn-lg { padding: .7rem 1.4rem; font-size: 14px; border-radius: 12px; }
     .btn-gold    { background: var(--gold); color: #000; }
-    .btn-gold:hover { background: #d97706; }
+    .btn-gold:hover, .btn-gold:active { background: #d97706; }
     .btn-outline-green  { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.3); color: #34d399; }
-    .btn-outline-green:hover  { background: rgba(16,185,129,.16); }
+    .btn-outline-green:hover, .btn-outline-green:active   { background: rgba(16,185,129,.18); }
     .btn-outline-purple { background: rgba(139,92,246,.08); border-color: rgba(139,92,246,.3); color: #a78bfa; }
-    .btn-outline-purple:hover { background: rgba(139,92,246,.16); }
+    .btn-outline-purple:hover, .btn-outline-purple:active { background: rgba(139,92,246,.18); }
     .btn-outline-gold   { background: rgba(245,158,11,.07); border-color: rgba(245,158,11,.25); color: var(--gold); }
-    .btn-outline-gold:hover   { background: rgba(245,158,11,.14); }
+    .btn-outline-gold:hover, .btn-outline-gold:active     { background: rgba(245,158,11,.16); }
     .btn-outline-silver { background: rgba(148,163,184,.07); border-color: rgba(148,163,184,.2); color: var(--silver); }
-    .btn-outline-silver:hover { background: rgba(148,163,184,.14); }
+    .btn-outline-silver:hover, .btn-outline-silver:active { background: rgba(148,163,184,.16); }
 
     /* ── HERO ────────────────────────────────────────────── */
     .s-hero {
@@ -125,54 +123,62 @@
       font-size: 10px; font-weight: 600; letter-spacing: .08em;
       color: #34d399; text-transform: uppercase; margin-bottom: 1.75rem;
     }
-    .s-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulsedot 2s ease-in-out infinite; }
+    .s-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulsedot 2s ease-in-out infinite; flex-shrink: 0; }
     @keyframes pulsedot { 0%,100%{opacity:1} 50%{opacity:.3} }
     .gold { color: var(--gold); }
     .s-h1 {
       font-size: clamp(2rem, 6vw, 3.8rem); font-weight: 700; line-height: 1.15;
       color: white; max-width: 820px; margin: 0 auto 1rem;
     }
-    .s-tagline { font-size: clamp(.9rem, 2vw, 1.05rem); color: var(--silver); max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.6; }
+    .s-tagline {
+      font-size: clamp(.9rem, 2vw, 1.05rem); color: var(--silver);
+      max-width: 620px; margin: 0 auto 2.5rem; line-height: 1.6;
+    }
 
-    /* ── CTA GRID ────────────────────────────────────────── */
+    /* ── CTA ROW ─────────────────────────────────────────── */
     .s-cta-grid {
       display: flex; flex-wrap: wrap; gap: .75rem;
       justify-content: center; margin-bottom: 2rem;
     }
 
     /* ── STATUS PILLS ────────────────────────────────────── */
-    .s-pills { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-bottom: 2.5rem; }
+    .s-pills {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      justify-content: center; margin-bottom: 2.5rem;
+    }
     .s-pill {
       display: inline-flex; align-items: center; gap: .35rem;
       padding: .3rem .75rem; border-radius: 50px;
       font-size: 11px; font-weight: 500; border: 1px solid transparent;
     }
-    .s-pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .7; }
+    .s-pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .7; flex-shrink: 0; }
     .s-pill-green  { background: rgba(16,185,129,.08);  border-color: rgba(16,185,129,.2);  color: #34d399; }
     .s-pill-gold   { background: rgba(245,158,11,.08);  border-color: rgba(245,158,11,.2);  color: var(--gold); }
     .s-pill-purple { background: rgba(139,92,246,.08);  border-color: rgba(139,92,246,.2);  color: #a78bfa; }
     .s-pill-cyan   { background: rgba(6,182,212,.08);   border-color: rgba(6,182,212,.2);   color: #22d3ee; }
 
-    /* ── INSTALL CARDS ───────────────────────────────────── */
+    /* ── INSTALL / DEMO CARDS ────────────────────────────── */
     .s-install-row {
       display: flex; flex-wrap: wrap; gap: .75rem;
-      justify-content: center; max-width: 860px; margin: 0 auto 1.5rem;
+      justify-content: center; max-width: 900px;
+      margin: 0 auto 1.5rem; width: 100%;
     }
     .s-install-card {
       flex: 1; min-width: 200px; max-width: 260px;
       background: var(--card); border: 1px solid var(--border);
       border-radius: 16px; padding: 1.1rem;
       cursor: pointer; text-align: left;
-      transition: border-color .15s, transform .15s;
+      transition: border-color .15s, transform .15s, background .15s;
       -webkit-tap-highlight-color: transparent;
     }
-    .s-install-card:hover, .s-install-card:active { transform: translateY(-2px); }
+    .s-install-card:hover  { transform: translateY(-3px); }
+    .s-install-card:active { transform: translateY(-1px); }
     .s-ic-gold   { border-color: rgba(245,158,11,.2);  }
-    .s-ic-gold:hover   { border-color: rgba(245,158,11,.5);  }
+    .s-ic-gold:hover   { border-color: rgba(245,158,11,.55); background: rgba(245,158,11,.03); }
     .s-ic-green  { border-color: rgba(16,185,129,.2);  }
-    .s-ic-green:hover  { border-color: rgba(16,185,129,.5);  }
+    .s-ic-green:hover  { border-color: rgba(16,185,129,.55); background: rgba(16,185,129,.03); }
     .s-ic-purple { border-color: rgba(139,92,246,.2);  }
-    .s-ic-purple:hover { border-color: rgba(139,92,246,.5);  }
+    .s-ic-purple:hover { border-color: rgba(139,92,246,.55); background: rgba(139,92,246,.03); }
     .s-ic-icon   { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: .5rem; }
     .s-ic-gold   .s-ic-icon  { background: rgba(245,158,11,.12); }
     .s-ic-green  .s-ic-icon  { background: rgba(16,185,129,.12); }
@@ -194,19 +200,23 @@
 
     /* ── FEATURES SECTION ────────────────────────────────── */
     .s-features {
-      width: 100%;
-      padding: 4rem 1.5rem;
+      width: 100%; padding: 4rem 1.5rem;
       background: rgba(255,255,255,.015);
       border-top: 1px solid var(--border);
     }
-    .s-section-title { text-align: center; font-size: clamp(1.4rem,3vw,1.9rem); font-weight: 700; color: var(--text); margin-bottom: .75rem; }
-    .s-section-sub   { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 2.5rem; max-width: 540px; margin-left: auto; margin-right: auto; }
+    .s-section-title {
+      text-align: center; font-size: clamp(1.4rem,3vw,1.9rem);
+      font-weight: 700; color: var(--text); margin-bottom: .75rem;
+    }
+    .s-section-sub {
+      text-align: center; color: var(--muted); font-size: 14px;
+      margin-bottom: 2.5rem; max-width: 540px;
+      margin-left: auto; margin-right: auto;
+    }
     .s-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 1rem;
-      max-width: 1200px;   /* FIX 2: wider max for desktop */
-      margin: 0 auto;
+      gap: 1rem; max-width: 1200px; margin: 0 auto;
     }
     .s-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem; }
     .s-card-icon  { font-size: 22px; margin-bottom: .5rem; }
@@ -215,84 +225,98 @@
 
     /* ── FOOTER ──────────────────────────────────────────── */
     .s-footer {
-      width: 100%;
-      background: #060a14; border-top: 1px solid var(--border);
+      width: 100%; background: #060a14;
+      border-top: 1px solid var(--border);
       padding: 2.5rem 1.5rem; text-align: center;
     }
     .s-footer-brand { font-size: 15px; font-weight: 700; color: var(--gold); margin-bottom: .3rem; }
     .s-footer-sub   { font-size: 11px; color: var(--muted); margin-bottom: 1.25rem; }
     .s-footer-links { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; margin-bottom: 1.5rem; }
-    .s-footer-disclaimer { max-width: 680px; margin: 0 auto; font-size: 10px; color: #374151; line-height: 1.65; margin-bottom: 1rem; }
+    .s-footer-disclaimer { max-width: 680px; margin: 0 auto 1rem; font-size: 10px; color: #374151; line-height: 1.65; }
     .s-footer-copy  { font-size: 10px; color: #374151; }
 
-    /* ── INSTALL MODAL ───────────────────────────────────── */
+    /* ── DEMO CHOOSER MODAL ──────────────────────────────── */
     .s-modal-bg {
       display: none; position: fixed; inset: 0; z-index: 9999;
-      background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center;
-      padding: 1rem;
+      background: rgba(0,0,0,.72); backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      align-items: center; justify-content: center; padding: 1rem;
+      -webkit-overflow-scrolling: touch;
     }
     .s-modal-bg.open { display: flex; }
-    .s-modal { background: #0d1426; border: 1px solid rgba(245,158,11,.2); border-radius: 20px; padding: 2rem; max-width: 440px; width: 100%; }
-    .s-modal h3 { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
-    .s-modal ol { padding-left: 1.2rem; }
-    .s-modal li { font-size: 12px; color: #94a3b8; margin-bottom: .4rem; line-height: 1.5; }
-    .s-modal-close {
-      display: block; width: 100%; margin-top: 1.5rem; padding: .7rem;
-      border-radius: 10px; background: rgba(245,158,11,.1);
-      border: 1px solid rgba(245,158,11,.25); color: var(--gold);
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      transition: background .15s;
-    }
-    .s-modal-close:hover { background: rgba(245,158,11,.2); }
-
-    /* ── DEMO LAUNCH MODAL ───────────────────────────────── */
-    .s-demo-modal-bg {
-      display: none; position: fixed; inset: 0; z-index: 9998;
-      background: rgba(0,0,0,.75); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center; padding: 1rem;
-    }
-    .s-demo-modal-bg.open { display: flex; }
-    .s-demo-modal {
+    .s-modal {
       background: #0d1426; border: 1px solid rgba(255,255,255,.1);
       border-radius: 20px; padding: 2rem; max-width: 460px; width: 100%;
-      text-align: center;
+      text-align: center; max-height: 90vh; overflow-y: auto;
     }
-    .s-demo-modal h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: .5rem; }
-    .s-demo-modal p  { font-size: 12.5px; color: var(--silver); margin-bottom: 1.5rem; line-height: 1.6; }
-    .s-demo-btns { display: flex; flex-direction: column; gap: .65rem; }
-    .s-demo-btn {
+    .s-modal h3   { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+    .s-modal-sub  { font-size: 12.5px; color: var(--silver); margin-bottom: 1.5rem; line-height: 1.5; }
+    .s-modal-btns { display: flex; flex-direction: column; gap: .65rem; }
+    .s-modal-btn {
       display: flex; align-items: center; justify-content: space-between;
       padding: .85rem 1.1rem; border-radius: 12px; cursor: pointer;
       border: 1px solid var(--border); background: rgba(255,255,255,.03);
       text-decoration: none; color: var(--text);
       transition: border-color .15s, background .15s;
       -webkit-tap-highlight-color: transparent;
+      text-align: left;
     }
-    .s-demo-btn:hover { background: rgba(255,255,255,.07); }
-    .s-demo-btn-label { font-size: 13px; font-weight: 600; }
-    .s-demo-btn-sub   { font-size: 11px; color: var(--muted); }
-    .s-demo-btn-arrow { font-size: 16px; opacity: .5; }
-    .s-demo-btn-gold   { border-color: rgba(245,158,11,.3); }
-    .s-demo-btn-gold:hover   { border-color: rgba(245,158,11,.6); background: rgba(245,158,11,.05); }
-    .s-demo-btn-green  { border-color: rgba(16,185,129,.3); }
-    .s-demo-btn-green:hover  { border-color: rgba(16,185,129,.6); background: rgba(16,185,129,.05); }
-    .s-demo-btn-purple { border-color: rgba(139,92,246,.3); }
-    .s-demo-btn-purple:hover { border-color: rgba(139,92,246,.6); background: rgba(139,92,246,.05); }
-    .s-demo-cancel {
-      margin-top: 1rem; background: none; border: none;
-      color: var(--muted); font-size: 12px; cursor: pointer; padding: .3rem;
+    .s-modal-btn:hover, .s-modal-btn:active { background: rgba(255,255,255,.08); }
+    .s-modal-btn-label { font-size: 13px; font-weight: 600; margin-bottom: .15rem; }
+    .s-modal-btn-sub   { font-size: 11px; color: var(--muted); }
+    .s-modal-btn-arrow { font-size: 18px; opacity: .45; flex-shrink: 0; margin-left: .5rem; }
+    .s-modal-btn-gold   { border-color: rgba(245,158,11,.3); }
+    .s-modal-btn-gold:hover   { border-color: rgba(245,158,11,.65); background: rgba(245,158,11,.06); }
+    .s-modal-btn-green  { border-color: rgba(16,185,129,.3); }
+    .s-modal-btn-green:hover  { border-color: rgba(16,185,129,.65); background: rgba(16,185,129,.06); }
+    .s-modal-btn-purple { border-color: rgba(139,92,246,.3); }
+    .s-modal-btn-purple:hover { border-color: rgba(139,92,246,.65); background: rgba(139,92,246,.06); }
+    .s-modal-cancel {
+      display: block; width: 100%; margin-top: 1.1rem;
+      background: none; border: none; color: var(--muted);
+      font-size: 12px; cursor: pointer; padding: .4rem;
     }
-    .s-demo-cancel:hover { color: var(--silver); }
+    .s-modal-cancel:hover { color: var(--silver); }
+
+    /* ── INSTALL INSTRUCTIONS MODAL ──────────────────────── */
+    .s-install-bg {
+      display: none; position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,.78); backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .s-install-bg.open { display: flex; }
+    .s-install-box {
+      background: #0d1426; border: 1px solid rgba(245,158,11,.22);
+      border-radius: 20px; padding: 2rem; max-width: 440px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .s-install-box h3  { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: .75rem; }
+    .s-install-box ol  { padding-left: 1.2rem; margin-bottom: 1rem; }
+    .s-install-box li  { font-size: 12px; color: #94a3b8; margin-bottom: .45rem; line-height: 1.55; }
+    .s-install-note    { font-size: 10.5px; color: #4b5563; line-height: 1.5; margin-top: .75rem; }
+    .s-install-close {
+      display: block; width: 100%; margin-top: 1.4rem; padding: .7rem;
+      border-radius: 10px; background: rgba(245,158,11,.1);
+      border: 1px solid rgba(245,158,11,.25); color: var(--gold);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .s-install-close:hover { background: rgba(245,158,11,.2); }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════
-     STATIC SHELL — renders instantly, no JS bundle required.
-     Navigation works via direct window.location — no Router needed.
-     React mounts over the top once the bundle loads.
-══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════
+     REACT ROOT — hidden until React mounts content into it.
+     This div MUST be present for ReactDOM.createRoot() to work.
+═══════════════════════════════════════════════════════════ -->
+<div id="root"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STATIC SHELL — renders instantly (zero JS required).
+     All navigation uses window.location.href — works before
+     React Router is active.  Hides once React is ready.
+═══════════════════════════════════════════════════════════ -->
 <div id="static-shell">
 
   <!-- NAV -->
@@ -345,7 +369,7 @@
       <span class="s-pill s-pill-gold"><span class="s-pill-dot"></span>RLS-Enabled Backend</span>
     </div>
 
-    <!-- Install / Demo cards -->
+    <!-- Demo / Install cards -->
     <div class="s-install-row">
 
       <div class="s-install-card s-ic-gold" onclick="openDemoModal('dashboard')">
@@ -402,12 +426,12 @@
     <div class="s-footer-brand">Big V's Best Routes™ Fleet</div>
     <div class="s-footer-sub">Powered by 4P3X Intelligent AI™ — Created by Kyzel Kreates™</div>
     <div class="s-footer-links">
-      <a href="/#/app/dashboard"          onclick="goTo('/#/app/dashboard');return false;"          class="btn btn-outline-gold"   style="font-size:11px;">⚡ Fleet Dashboard</a>
-      <a href="/#/driver-app"             onclick="goTo('/#/driver-app');return false;"             class="btn btn-outline-green"  style="font-size:11px;">🚗 Driver PWA</a>
-      <a href="/#/fleet-controller-pwa"   onclick="goTo('/#/fleet-controller-pwa');return false;"   class="btn btn-outline-purple" style="font-size:11px;">📡 Controller PWA</a>
-      <a href="/#/app/api-settings"       onclick="goTo('/#/app/api-settings');return false;"       class="btn btn-outline-silver" style="font-size:11px;">API Settings</a>
-      <a href="/#/app/backend-settings"   onclick="goTo('/#/app/backend-settings');return false;"   class="btn btn-outline-silver" style="font-size:11px;">Backend Settings</a>
-      <a href="/#/app/pwa-deployment"     onclick="goTo('/#/app/pwa-deployment');return false;"     class="btn btn-outline-silver" style="font-size:11px;">PWA Deployment</a>
+      <a href="/#/app/dashboard"        onclick="goTo('/#/app/dashboard');return false;"        class="btn btn-outline-gold"   style="font-size:11px;">⚡ Fleet Dashboard</a>
+      <a href="/#/driver-app"           onclick="goTo('/#/driver-app');return false;"           class="btn btn-outline-green"  style="font-size:11px;">🚗 Driver PWA</a>
+      <a href="/#/fleet-controller-pwa" onclick="goTo('/#/fleet-controller-pwa');return false;" class="btn btn-outline-purple" style="font-size:11px;">📡 Controller PWA</a>
+      <a href="/#/app/api-settings"     onclick="goTo('/#/app/api-settings');return false;"     class="btn btn-outline-silver" style="font-size:11px;">API Settings</a>
+      <a href="/#/app/backend-settings" onclick="goTo('/#/app/backend-settings');return false;" class="btn btn-outline-silver" style="font-size:11px;">Backend Settings</a>
+      <a href="/#/app/pwa-deployment"   onclick="goTo('/#/app/pwa-deployment');return false;"   class="btn btn-outline-silver" style="font-size:11px;">PWA Deployment</a>
     </div>
     <div class="s-footer-disclaimer">
       Big V's Best Routes™ Fleet is advisory and safety-supporting software.
@@ -425,169 +449,168 @@
 </div><!-- /#static-shell -->
 
 
-<!-- ── PWA Install modal ──────────────────────────────────── -->
-<div class="s-modal-bg" id="install-modal">
+<!-- ═══ DEMO CHOOSER MODAL ════════════════════════════════ -->
+<div class="s-modal-bg" id="demo-modal">
   <div class="s-modal">
-    <h3 id="modal-title">Install App</h3>
-    <p id="modal-body-top" style="font-size:12.5px;color:#94a3b8;margin-bottom:1rem;line-height:1.5;"></p>
-    <ol>
-      <li>The app page has opened in your browser (or a new tab).</li>
-      <li>Tap the browser menu <strong>⋮</strong> or Share icon <strong>⬆</strong>.</li>
-      <li>Select <strong>Add to Home Screen</strong> or <strong>Install app</strong>.</li>
-      <li>On desktop Chrome/Edge: look for the <strong>install ⊕ icon</strong> in the address bar.</li>
-      <li>Confirm the prompt — the app installs like a native app.</li>
-    </ol>
-    <p style="margin-top:1rem;font-size:10.5px;color:#4b5563;">
-      The dashboard cannot remotely install a PWA on another device.
-      Share the direct link with the driver or controller and they install it from their own browser.
-    </p>
-    <button class="s-modal-close" onclick="closeInstallModal()">Got it — Close</button>
+    <h3 id="dm-title">Open Demo</h3>
+    <p class="s-modal-sub" id="dm-sub"></p>
+    <div class="s-modal-btns" id="dm-btns"></div>
+    <button class="s-modal-cancel" onclick="closeDemoModal()">Cancel</button>
   </div>
 </div>
 
-<!-- ── Demo/Install chooser modal ────────────────────────── -->
-<div class="s-demo-modal-bg" id="demo-modal">
-  <div class="s-demo-modal">
-    <h3 id="demo-modal-title">Open Demo</h3>
-    <p id="demo-modal-sub">Choose how you'd like to open this part of the platform.</p>
-    <div class="s-demo-btns" id="demo-modal-btns">
-      <!-- populated by JS -->
-    </div>
-    <button class="s-demo-cancel" onclick="closeDemoModal()">Cancel</button>
+<!-- ═══ INSTALL INSTRUCTIONS MODAL ═══════════════════════ -->
+<div class="s-install-bg" id="install-modal">
+  <div class="s-install-box">
+    <h3 id="im-title">Install App</h3>
+    <ol>
+      <li>The app page has opened in a new tab (or this tab).</li>
+      <li>Tap the browser menu <strong>⋮</strong> or Share icon <strong>⬆</strong>.</li>
+      <li>Select <strong>"Add to Home Screen"</strong> or <strong>"Install app"</strong>.</li>
+      <li>On desktop Chrome / Edge: look for the <strong>install ⊕ icon</strong> in the address bar.</li>
+      <li>Confirm the prompt — it installs like a native app.</li>
+    </ol>
+    <p class="s-install-note">
+      The platform cannot remotely install a PWA on another device.
+      Share the direct link with the driver or controller and they install it from their own browser.
+    </p>
+    <button class="s-install-close" onclick="closeInstallModal()">Got it — Close</button>
   </div>
 </div>
 
 
 <script>
-  /* ── Navigation helper — works before React Router is ready ── */
-  function goTo(hash) {
-    // Hide static shell immediately so React can take over
-    var shell = document.getElementById('static-shell');
-    var root  = document.getElementById('root');
-    if (shell) shell.classList.add('hidden');
-    if (root)  root.classList.add('ready');
-    // Navigate using the hash — React Router picks it up
-    window.location.href = window.location.origin + '/' + hash;
+/* ════════════════════════════════════════════════════════════
+   NAVIGATION
+   goTo() hides the static shell, marks #root ready, then
+   navigates to the hash route. React Router picks it up.
+════════════════════════════════════════════════════════════ */
+function goTo(hash) {
+  var shell = document.getElementById('static-shell');
+  var root  = document.getElementById('root');
+  if (shell) shell.classList.add('gone');
+  if (root)  root.classList.add('ready');
+  window.location.href = window.location.origin + '/' + hash;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DEMO CHOOSER MODAL
+════════════════════════════════════════════════════════════ */
+var _demos = {
+  dashboard: {
+    title: '⚡ Fleet Dashboard',
+    sub:   'Full fleet ops, map, driver oversight, compliance AI, and PWA deployment centre.',
+    btns: [
+      { label: 'Open Dashboard Demo',  sub: 'Runs in demo mode — no account needed',     color: 'gold',   route: '/#/app/dashboard' },
+      { label: 'Install as App',        sub: 'Add to your home screen or desktop',        color: 'gold',   route: '/#/app/dashboard', install: true }
+    ]
+  },
+  driver: {
+    title: '🚗 Driver PWA',
+    sub:   'Driver navigation, pre-trip checklist, GPS, trip events, incident notes, offline queue.',
+    btns: [
+      { label: 'Open Driver Demo',      sub: 'Preview in this browser tab',               color: 'green',  route: '/#/driver-app' },
+      { label: 'Install Driver App',    sub: 'Install on this device as a native PWA',   color: 'green',  route: '/#/driver-app',   install: true },
+      { label: 'Open in New Tab',       sub: 'For sharing with a driver\'s device',       color: 'green',  route: '/#/driver-app',   newTab: true }
+    ]
+  },
+  controller: {
+    title: '📡 Controller PWA',
+    sub:   'Live fleet view, driver check-ins, incident review, route flags, and controller notes.',
+    btns: [
+      { label: 'Open Controller Demo',  sub: 'Preview in this browser tab',               color: 'purple', route: '/#/fleet-controller-pwa' },
+      { label: 'Install Controller App',sub: 'Install on this device as a native PWA',   color: 'purple', route: '/#/fleet-controller-pwa', install: true },
+      { label: 'Open in New Tab',       sub: 'For sharing with a controller\'s device',  color: 'purple', route: '/#/fleet-controller-pwa', newTab: true }
+    ]
   }
+};
 
-  /* ── Demo / Install chooser modal ───────────────────────── */
-  var _demoConfig = {
-    dashboard: {
-      title: '⚡ Fleet Dashboard',
-      sub:   'Full fleet ops, map, driver oversight, compliance AI, and PWA deployment centre.',
-      btns: [
-        { label: 'Open Dashboard Demo', sub: 'Runs in demo mode — no account needed', color: 'gold',   href: '/#/app/dashboard' },
-        { label: 'Install as App',      sub: 'Add Fleet Dashboard to your home screen', color: 'gold',  href: '/#/app/dashboard', install: true },
-      ]
-    },
-    driver: {
-      title: '🚗 Driver PWA',
-      sub:   'Driver navigation, pre-trip checklist, GPS, trip events, incident notes, offline queue.',
-      btns: [
-        { label: 'Open Driver Demo',    sub: 'Preview the Driver PWA in your browser', color: 'green',  href: '/#/driver-app' },
-        { label: 'Install Driver App',  sub: 'Install on this device as a native PWA', color: 'green',  href: '/#/driver-app',  install: true },
-        { label: 'Open in New Tab',     sub: 'Share this tab with a driver device',    color: 'green',  href: '/#/driver-app',  newTab: true },
-      ]
-    },
-    controller: {
-      title: '📡 Controller PWA',
-      sub:   'Live fleet view, driver check-ins, incident review, route flags, and controller notes.',
-      btns: [
-        { label: 'Open Controller Demo',    sub: 'Preview the Controller PWA in your browser', color: 'purple', href: '/#/fleet-controller-pwa' },
-        { label: 'Install Controller App',  sub: 'Install on this device as a native PWA',     color: 'purple', href: '/#/fleet-controller-pwa', install: true },
-        { label: 'Open in New Tab',         sub: 'Share this tab with a controller device',    color: 'purple', href: '/#/fleet-controller-pwa', newTab: true },
-      ]
-    }
-  };
-
-  function openDemoModal(type) {
-    var cfg = _demoConfig[type];
-    if (!cfg) return;
-    document.getElementById('demo-modal-title').textContent = cfg.title;
-    document.getElementById('demo-modal-sub').textContent   = cfg.sub;
-    var container = document.getElementById('demo-modal-btns');
-    container.innerHTML = '';
-    cfg.btns.forEach(function(b) {
-      var el = document.createElement('a');
-      el.href = b.href;
-      el.className = 's-demo-btn s-demo-btn-' + b.color;
-      el.innerHTML =
-        '<div><div class="s-demo-btn-label">' + b.label + '</div><div class="s-demo-btn-sub">' + b.sub + '</div></div>' +
-        '<div class="s-demo-btn-arrow">→</div>';
-      el.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeDemoModal();
-        if (b.newTab) {
-          window.open(window.location.origin + '/' + b.href, '_blank', 'noopener');
-        } else if (b.install) {
-          goTo(b.href);
-          setTimeout(function() {
-            openInstallModal(
-              'Install ' + cfg.title,
-              'Navigate to the app page, then use your browser menu to install it on this device.'
-            );
-          }, 300);
-        } else {
-          goTo(b.href);
-        }
-      });
-      container.appendChild(el);
+function openDemoModal(type) {
+  var cfg = _demos[type]; if (!cfg) return;
+  document.getElementById('dm-title').textContent = cfg.title;
+  document.getElementById('dm-sub').textContent   = cfg.sub;
+  var wrap = document.getElementById('dm-btns');
+  wrap.innerHTML = '';
+  cfg.btns.forEach(function(b) {
+    var a = document.createElement('a');
+    a.href = '#';
+    a.className = 's-modal-btn s-modal-btn-' + b.color;
+    a.innerHTML  = '<div><div class="s-modal-btn-label">' + b.label + '</div>'
+                 + '<div class="s-modal-btn-sub">'   + b.sub   + '</div></div>'
+                 + '<div class="s-modal-btn-arrow">→</div>';
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      closeDemoModal();
+      if (b.newTab) {
+        window.open(window.location.origin + '/' + b.route, '_blank', 'noopener,noreferrer');
+      } else if (b.install) {
+        goTo(b.route);
+        setTimeout(function() {
+          document.getElementById('im-title').textContent = 'Install ' + cfg.title;
+          openInstallModal();
+        }, 400);
+      } else {
+        goTo(b.route);
+      }
     });
-    document.getElementById('demo-modal').classList.add('open');
-  }
-  function closeDemoModal() {
-    document.getElementById('demo-modal').classList.remove('open');
-  }
-  document.getElementById('demo-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeDemoModal();
+    wrap.appendChild(a);
   });
+  document.getElementById('demo-modal').classList.add('open');
+}
+function closeDemoModal() {
+  document.getElementById('demo-modal').classList.remove('open');
+}
+document.getElementById('demo-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDemoModal();
+});
 
-  /* ── Install modal ─────────────────────────────────────── */
-  function openInstallModal(title, bodyHtml) {
-    document.getElementById('modal-title').textContent = title || 'Install App';
-    if (bodyHtml) document.getElementById('modal-body-top').innerHTML = bodyHtml;
-    document.getElementById('install-modal').classList.add('open');
-  }
-  function closeInstallModal() {
-    document.getElementById('install-modal').classList.remove('open');
-  }
-  document.getElementById('install-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeInstallModal();
-  });
+/* ════════════════════════════════════════════════════════════
+   INSTALL INSTRUCTIONS MODAL
+════════════════════════════════════════════════════════════ */
+function openInstallModal()  { document.getElementById('install-modal').classList.add('open'); }
+function closeInstallModal() { document.getElementById('install-modal').classList.remove('open'); }
+document.getElementById('install-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeInstallModal();
+});
 
-  /* ── Capture PWA install prompt early ─────────────────── */
-  window._pwaPrompt = null;
-  window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault();
-    window._pwaPrompt = e;
-  });
+/* ════════════════════════════════════════════════════════════
+   CAPTURE BROWSER PWA INSTALL PROMPT EARLY
+════════════════════════════════════════════════════════════ */
+window._pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  window._pwaPrompt = e;
+});
 
-  /* ── React handoff ─────────────────────────────────────── */
-  var _handoff = false;
-  function doHandoff() {
-    if (_handoff) return;
+/* ════════════════════════════════════════════════════════════
+   REACT HANDOFF
+   Watch #root — once React mounts children, hide shell.
+════════════════════════════════════════════════════════════ */
+(function() {
+  var done = false;
+  function handoff() {
+    if (done) return;
     var root = document.getElementById('root');
-    if (root && root.children.length > 0) {
-      _handoff = true;
-      var shell = document.getElementById('static-shell');
-      if (shell) shell.classList.add('hidden');
-      root.classList.add('ready');
-      if (window._rootObserver) window._rootObserver.disconnect();
-    }
+    if (!root || !root.children.length) return;
+    done = true;
+    var shell = document.getElementById('static-shell');
+    if (shell) shell.classList.add('gone');
+    root.classList.add('ready');
+    if (window.__shellObs) window.__shellObs.disconnect();
   }
-  var _rootEl = document.getElementById('root');
-  if (_rootEl) {
-    window._rootObserver = new MutationObserver(doHandoff);
-    window._rootObserver.observe(_rootEl, { childList: true, subtree: false });
+  var root = document.getElementById('root');
+  if (root) {
+    window.__shellObs = new MutationObserver(handoff);
+    window.__shellObs.observe(root, { childList: true });
   }
+  // If React never mounts (no Supabase env etc), static shell stays — no blank page
   setTimeout(function() {
-    if (!_handoff) {
-      console.warn('[BigV] React bundle not mounted within 10s — static shell active.');
-    }
-  }, 10000);
+    if (!done) console.warn('[BigV] React not mounted in 12s — staying on static shell.');
+  }, 12000);
+})();
 </script>
 
-<!-- React app entry — loads async after shell is visible -->
+<!-- React bundle (injected by Vite build) -->
 <script type="module" src="./main.jsx"></script>
 
 </body>
