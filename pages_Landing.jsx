@@ -261,13 +261,15 @@ export default function Landing() {
     setShowDashInstall(true)
   }
 
-  const openDriverPwa = () => {
-    window.open('/#/driver-app', '_blank', 'noopener')
+  const openDriverPwa  = () => markSeenAndGo('/driver-app')
+  const installDriverPwa = () => {
+    if (prompt) { trigger(); return }
     setShowDriverInstall(true)
   }
 
-  const openControllerPwa = () => {
-    window.open('/#/fleet-controller-pwa', '_blank', 'noopener')
+  const openControllerPwa  = () => markSeenAndGo('/fleet-controller-pwa')
+  const installControllerPwa = () => {
+    if (prompt) { trigger(); return }
     setShowCtrlInstall(true)
   }
 
@@ -306,7 +308,21 @@ export default function Landing() {
               className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/25 text-amber-400 rounded-lg text-xs font-semibold hover:bg-amber-500/18 transition-colors">
               <Ico name="LayoutDash" size={12} />
               <span className="hidden sm:inline">Dashboard</span>
-              <span className="sm:hidden">Open</span>
+              <span className="sm:hidden">⚡</span>
+            </button>
+            <button
+              onClick={openDriverPwa}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/8 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-semibold hover:bg-emerald-500/15 transition-colors">
+              <Ico name="Smartphone" size={12} />
+              <span className="hidden sm:inline">Driver</span>
+              <span className="sm:hidden">🚗</span>
+            </button>
+            <button
+              onClick={openControllerPwa}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-500/8 border border-violet-500/20 text-violet-400 rounded-lg text-xs font-semibold hover:bg-violet-500/15 transition-colors">
+              <Ico name="Activity" size={12} />
+              <span className="hidden sm:inline">Controller</span>
+              <span className="sm:hidden">📡</span>
             </button>
           </div>
         </div>
@@ -357,16 +373,16 @@ export default function Landing() {
             </button>
 
             <button
-              onClick={openDriverPwa}
+              onClick={installDriverPwa}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-300 font-semibold rounded-xl text-sm transition-all duration-200">
-              <Ico name="Smartphone" size={15} />
+              <Ico name="Download" size={15} />
               Install Driver PWA
             </button>
 
             <button
-              onClick={openControllerPwa}
+              onClick={installControllerPwa}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-violet-500/30 hover:border-violet-500/50 text-violet-300 font-semibold rounded-xl text-sm transition-all duration-200">
-              <Ico name="Activity" size={15} />
+              <Ico name="Download" size={15} />
               Install Controller PWA
             </button>
           </div>

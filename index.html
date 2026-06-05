@@ -490,7 +490,8 @@ function goTo(hash) {
   var root  = document.getElementById('root');
   if (shell) shell.classList.add('gone');
   if (root)  root.classList.add('ready');
-  window.location.href = window.location.origin + '/' + hash;
+  // hash is already a full path like '/#/app/dashboard' — just append to origin
+  window.location.href = window.location.origin + (hash.startsWith('/') ? hash : '/' + hash);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -542,7 +543,7 @@ function openDemoModal(type) {
       e.preventDefault();
       closeDemoModal();
       if (b.newTab) {
-        window.open(window.location.origin + '/' + b.route, '_blank', 'noopener,noreferrer');
+        window.open(window.location.origin + (b.route.startsWith('/') ? b.route : '/' + b.route), '_blank', 'noopener,noreferrer');
       } else if (b.install) {
         goTo(b.route);
         setTimeout(function() {
