@@ -75,15 +75,38 @@ export default defineConfig({
 
       // ── Workbox config ─────────────────────────────────────
       workbox: {
-        // Cache all static assets
-        globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
+        // Cache static assets EXCEPT html (html is always network-first)
+        globPatterns: ['**/*.{js,css,png,svg,ico,woff2}'],
 
-        // Remove old caches on update
+        // Remove old caches on SW update
         cleanupOutdatedCaches: true,
 
+        // ── NavigateFallback: let SW handle SPA routing ────
+        navigateFallback: '/index.html',
 
         // Runtime caching rules
         runtimeCaching: [
+          // ── HTML navigation — ALWAYS NetworkFirst ─────────
+          // This prevents stale app shells from being served.
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'html-shell',
+              networkTimeoutSeconds: 4,
+              expiration: { maxEntries: 5, maxAgeSeconds: 60 },
+            },
+          },
+          // ── JS/CSS bundles — StaleWhileRevalidate ─────────
+          // Serves fast from cache, updates in background.
+          {
+            urlPattern: /\/assets\/.*\.(js|css)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'js-css-assets',
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            },
+          },
           // ── Supabase REST API — network-first, cache 30s ──
           {
             urlPattern: ({ url }) => url.hostname.includes('supabase.co') && url.pathname.includes('/rest/'),
