@@ -807,12 +807,13 @@ export default function DriverApp() {
     <div style={{ position: 'fixed', inset: 0, background: '#050810', fontFamily: 'Inter,system-ui,sans-serif', overflow: 'hidden' }}>
 
       {/* ══════════════ MAP (full screen, z-index 0) ══════════════ */}
+      <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }}>
       <MapContainer
         center={DEFAULT_CENTER}
         zoom={13}
         zoomControl={false}
         attributionControl={true}
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }}
+        style={{ width: '100%', height: '100%' }}
       >
         <MapRefCapture mapRef={mapRef} />
         <TileLayer
@@ -892,6 +893,7 @@ export default function DriverApp() {
           />
         )}
       </MapContainer>
+      </div>{/* /map-wrapper */}
 
       {/* ══════════════ TOP NAV BAR ══════════════════════════════ */}
       <div style={{
