@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SW VERSION GUARD — bumping SW_APP_VERSION forces all clients
+       to clear stale service worker caches and reload fresh assets.
+       Increment SW_APP_VERSION whenever a major update is deployed.
+  ════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function() {
+    var SW_APP_VERSION = 'v6'; // bump this to force SW cache clear
+    var stored = localStorage.getItem('bigv:sw:version');
+    if (stored !== SW_APP_VERSION) {
+      // Version mismatch — unregister all SWs and clear all caches
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          regs.forEach(function(r) { r.unregister(); });
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(k) { caches.delete(k); });
+        });
+      }
+      localStorage.setItem('bigv:sw:version', SW_APP_VERSION);
+      // Reload once to pick up fresh SW + assets (only if version changed)
+      if (stored !== null) {
+        window.location.reload(true);
+      }
+    }
+  })();
+  </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0a0f1e" />
