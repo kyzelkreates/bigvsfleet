@@ -14,7 +14,18 @@
  * ============================================================
  */
 
-import { createHashRouter, Navigate } from 'react-router-dom'
+import { createHashRouter, Navigate, Outlet } from 'react-router-dom'
+import ScrollToTop from './components_ScrollToTop'
+
+// Root layout — applies ScrollToTop globally across all routes
+function RootLayout() {
+  return (
+    <>
+      <ScrollToTop />
+      <Outlet />
+    </>
+  )
+}
 
 import AppShell      from './layouts_AppShell'
 import AuthGuard     from './components_auth_AuthGuard'
@@ -82,9 +93,14 @@ const LoginOrSetup = ({ element }) =>
 
 // ─── Router ───────────────────────────────────────────────────
 export const router = createHashRouter([
+  {
+    // Root layout — ScrollToTop fires on every route change
+    path: '/',
+    element: <RootLayout />,
+    children: [
 
   // ── HOME: Landing page (always public — the home page) ──────
-  { path: '/',                      element: <Landing /> },
+  { path: '',                       element: <Landing /> },
   // Legacy /landing alias → redirect to /
   { path: '/landing',               element: <Navigate to="/" replace /> },
 
@@ -175,7 +191,10 @@ export const router = createHashRouter([
   { path: '/ai',                    element: <Navigate to="/app/ai" replace /> },
 
   // ── 404 ───────────────────────────────────────────────────
-  { path: '*', element: <NotFound /> }
+  { path: '*', element: <NotFound /> },
+
+    ] // end children of RootLayout
+  }  // end RootLayout route
 ])
 
 export default router

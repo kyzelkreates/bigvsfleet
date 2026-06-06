@@ -24,17 +24,38 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body {
     @apply bg-apex-base text-apex-text-primary font-sans overflow-hidden;
     height: 100dvh;
     width: 100dvw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Landing page — needs full vertical scroll */
+  body.page-landing {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100dvh;
   }
 
   #root {
     @apply h-full w-full;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Landing page root — allow full height scroll */
+  body.page-landing #root {
+    height: auto !important;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
 
   /* Scrollbar */

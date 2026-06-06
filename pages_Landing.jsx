@@ -241,6 +241,19 @@ export default function Landing() {
   const [demoMode, setDemoMode] = useState(true)
   const heroRef = useRef(null)
 
+  // ── Landing-page body class + scroll to top on mount ────────
+  // Adds page-landing to <body> so CSS can override overflow for scrollable landing
+  // Removes it when navigating away so dashboard stays overflow:hidden
+  useEffect(() => {
+    document.body.classList.add('page-landing')
+    try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) } catch {}
+    try { window.scroll(0, 0) } catch {}
+    return () => {
+      document.body.classList.remove('page-landing')
+    }
+  }, [])
+
+  // ── Sync demo/live mode from SSOT ──────────────────────────
   useEffect(() => {
     try {
       const raw = localStorage.getItem('bigv:mode:demoLive')
@@ -251,6 +264,8 @@ export default function Landing() {
   // ── Button handlers ─────────────────────────────────────────
   const markSeenAndGo = (path) => {
     try { localStorage.setItem('bigv:landing:seen', 'true') } catch {}
+    // Scroll to top before navigating so destination page starts at top
+    try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) } catch {}
     navigate(path)
   }
 

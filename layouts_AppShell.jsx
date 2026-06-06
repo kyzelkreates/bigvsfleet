@@ -6,7 +6,7 @@
  * ============================================================
  */
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import Sidebar from './layouts_Sidebar'
@@ -19,9 +19,14 @@ export default function AppShell() {
   const closeSidebar    = useAppStore(s => s.closeSidebar  || (() => s.sidebarExpanded && s.toggleSidebar?.()))
   const location        = useLocation()
 
-  // Close drawer on route change
+  // Close drawer + scroll main content to top on route change
+  const mainRef = useRef(null)
   useEffect(() => {
     useAppStore.getState().closeSidebar?.()
+    // Scroll the main content area to the top
+    try {
+      if (mainRef.current) mainRef.current.scrollTop = 0
+    } catch {}
   }, [location.pathname])
 
   return (
@@ -42,7 +47,7 @@ export default function AppShell() {
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <TopNav />
         <BackendWarningBanner />
-        <main className="flex-1 overflow-auto scrollbar-none">
+        <main id="main-content" ref={mainRef} className="flex-1 overflow-auto scrollbar-none" data-scroll-reset>
           <Outlet />
         </main>
       </div>

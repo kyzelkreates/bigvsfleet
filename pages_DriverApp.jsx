@@ -257,6 +257,12 @@ function MapController({ pos, follow, zoom }) {
   const map = useMap()
   const prevFollow = useRef(follow)
 
+  // Scroll to top on mount
+  useEffect(() => {
+    try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) } catch {}
+    try { window.scroll(0, 0) } catch {}
+  }, [])
+
   useEffect(() => {
     if (!pos) return
     if (follow || (!prevFollow.current && follow)) {
