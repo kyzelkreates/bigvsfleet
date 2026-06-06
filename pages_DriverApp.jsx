@@ -434,10 +434,10 @@ function SearchPanel({ onSelect, onClose, label }) {
 // ─────────────────────────────────────────────────────────────
 // Advisory banner (always shown at bottom of map)
 // ─────────────────────────────────────────────────────────────
-function AdvisoryBanner() {
+function AdvisoryBanner({ navActive }) {
   return (
     <div style={{
-      position: 'absolute', bottom: 0, left: 0, right: 0,
+      position: 'absolute', bottom: navActive ? 90 : 0, left: 0, right: 0,
       zIndex: 410,
       background: 'rgba(5,8,16,0.85)',
       backdropFilter: 'blur(8px)',
@@ -961,8 +961,8 @@ export default function DriverApp() {
           </div>
         </div>
 
-        {/* Centre — turn instruction (when trip active) */}
-        {tripActive && currentStep && (
+        {/* Centre — turn instruction (hidden when trip active; dedicated banner used instead) */}
+        {false && tripActive && currentStep && (
           <div style={{
             flex: 1, maxWidth: 300,
             background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)',
@@ -1053,8 +1053,8 @@ export default function DriverApp() {
           padding: '0 16px',
         }}>
 
-          {/* Route info card */}
-          {routeInfo && !panel.startsWith('search') && panel !== 'steps' && (
+          {/* Route info card — pre-navigation only */}
+          {!tripActive && routeInfo && !panel.startsWith('search') && panel !== 'steps' && (
             <div style={{
               background: 'rgba(13,20,38,0.96)',
               border: '1px solid rgba(124,58,237,0.2)',
@@ -1373,10 +1373,117 @@ export default function DriverApp() {
       )}
 
       {/* ══════════════ ROUTE LEGEND ════════════════════════════════ */}
-      <RouteLegend visible={!!(routeFastest || routeSafest || routeUnsafe)} />
+      <RouteLegend visible={!tripActive && !!(routeFastest || routeSafest || routeUnsafe)} />
+
+      {/* ══════════════ ACTIVE NAV HUD (trip running) ══════════════ */}
+      {tripActive && !tripArrived && (
+        <>
+          {/* ── Turn instruction — top-centre big banner ── */}
+          {currentStep && (
+            <div style={{
+              position: 'absolute', top: 52, left: '50%', transform: 'translateX(-50%)',
+              zIndex: 420,
+              background: 'rgba(5,8,22,0.94)',
+              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(124,58,237,0.35)',
+              borderRadius: 16,
+              padding: '10px 18px',
+              display: 'flex', alignItems: 'center', gap: 12,
+              maxWidth: 340, minWidth: 200,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+            }}>
+              <span style={{ fontSize: 32, lineHeight: 1, flexShrink: 0 }}>{stepArrow(currentStep)}</span>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
+                  {stepText(currentStep)}
+                </div>
+                {currentStep.distance > 0 && (
+                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                    In {fmtDist(currentStep.distance)}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── Mini bottom HUD strip ── */}
+          <div style={{
+            position: 'absolute', bottom: 32, left: 12, right: 12,
+            zIndex: 420,
+            background: 'rgba(5,8,22,0.92)',
+            backdropFilter: 'blur(14px)',
+            border: '1px solid rgba(124,58,237,0.2)',
+            borderRadius: 16,
+            padding: '10px 14px',
+            display: 'flex', alignItems: 'center', gap: 12,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+          }}>
+
+            {/* Speed */}
+            <div style={{ textAlign: 'center', minWidth: 46 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: speed > 90 ? '#ef4444' : '#22c55e', lineHeight: 1 }}>
+                {speed}
+              </div>
+              <div style={{ fontSize: 8, color: '#475569', marginTop: 1 }}>km/h</div>
+            </div>
+
+            <div style={{ width: 1, height: 32, background: 'rgba(71,85,105,0.4)', flexShrink: 0 }} />
+
+            {/* Distance remaining */}
+            <div style={{ textAlign: 'center', flex: 1 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
+                {fmtDist(pos ? distRemaining : routeInfo?.distance || 0)}
+              </div>
+              <div style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>remaining</div>
+            </div>
+
+            <div style={{ width: 1, height: 32, background: 'rgba(71,85,105,0.4)', flexShrink: 0 }} />
+
+            {/* ETA */}
+            <div style={{ textAlign: 'center', flex: 1 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#a78bfa', lineHeight: 1 }}>
+                {fmtETA(pos ? distRemaining / 15 : routeInfo?.duration || 0)}
+              </div>
+              <div style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>ETA</div>
+            </div>
+
+            <div style={{ width: 1, height: 32, background: 'rgba(71,85,105,0.4)', flexShrink: 0 }} />
+
+            {/* Centre + End buttons */}
+            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+              <button onClick={() => setFollow(true)} style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: follow ? 'rgba(124,58,237,0.25)' : 'rgba(30,41,59,0.8)',
+                border: `1px solid ${follow ? 'rgba(124,58,237,0.5)' : 'rgba(71,85,105,0.3)'}`,
+                color: follow ? '#a78bfa' : '#64748b',
+                fontSize: 16, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }} title="Re-centre map">🎯</button>
+
+              <button onClick={endTrip} style={{
+                padding: '0 14px', height: 36, borderRadius: 10,
+                background: 'rgba(239,68,68,0.12)',
+                border: '1px solid rgba(239,68,68,0.35)',
+                color: '#ef4444', fontWeight: 700, fontSize: 11,
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+              }}>■ End</button>
+            </div>
+
+            {demoRunning && (
+              <div style={{
+                position: 'absolute', top: -18, right: 14,
+                fontSize: 8, color: '#f59e0b', fontWeight: 700,
+                background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)',
+                borderRadius: 20, padding: '2px 7px', letterSpacing: '0.05em',
+              }}>DEMO SIMULATING</div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* ══════════════ ADVISORY BANNER (always) ══════════════════ */}
-      <AdvisoryBanner />
+      <AdvisoryBanner navActive={tripActive && !tripArrived} />
 
       {/* CSS animations */}
       <style>{`
