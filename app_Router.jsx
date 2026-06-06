@@ -108,6 +108,9 @@ export const router = createHashRouter([
   // ── About page (public) ───────────────────────────────────
   { path: '/about',                 element: <About /> },
 
+  // ── Investor page (public) — landing page serves as investor deck ─
+  { path: '/investor',              element: <Navigate to="/" replace /> },
+
   // ── First-run Setup (public) ──────────────────────────────
   { path: '/auth/setup',            element: <Setup /> },
 

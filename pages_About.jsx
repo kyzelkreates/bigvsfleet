@@ -106,7 +106,7 @@ export default function About() {
             style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 13, padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
             <SvgIco name="home" size={14} color="#94a3b8" /> Home
           </button>
-          <button onClick={() => nav('/investor')}
+          <button onClick={() => nav('/')}
             style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 13, padding: '6px 12px', borderRadius: 8 }}>
             Investor
           </button>
