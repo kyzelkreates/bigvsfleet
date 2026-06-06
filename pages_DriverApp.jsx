@@ -37,6 +37,7 @@ import {
   MapContainer, TileLayer, Marker, Polyline, useMap, useMapEvents,
 } from 'react-leaflet'
 import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 // ─────────────────────────────────────────────────────────────
 // SYNC GATE — set to true when backend is connected

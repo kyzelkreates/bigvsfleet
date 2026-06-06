@@ -266,3 +266,16 @@ main, .page-content {
   height: 100dvh;
   overflow: hidden;
 }
+
+/* ── Leaflet map fix — ensure tiles fill the container fully ── */
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0;
+}
+.leaflet-tile-pane { z-index: 1; }
+.leaflet-overlay-pane { z-index: 2; }
+.leaflet-marker-pane { z-index: 3; }
+.leaflet-control-container { z-index: 10; }
