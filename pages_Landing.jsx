@@ -234,10 +234,6 @@ function PotentialCard({ title }) {
 
 export default function Landing() {
   const navigate      = useNavigate()
-  const { prompt, installed, trigger } = usePWAInstall()
-  const [showDashInstall, setShowDashInstall] = useState(false)
-  const [showDriverInstall, setShowDriverInstall] = useState(false)
-  const [showCtrlInstall,   setShowCtrlInstall]   = useState(false)
   const [demoMode, setDemoMode] = useState(true)
   const heroRef = useRef(null)
 
@@ -269,24 +265,9 @@ export default function Landing() {
     navigate(path)
   }
 
-  const openDashboard = () => markSeenAndGo('/app/dashboard')
-
-  const installDashboard = async () => {
-    if (prompt) { await trigger(); return }
-    setShowDashInstall(true)
-  }
-
-  const openDriverPwa  = () => markSeenAndGo('/driver-app')
-  const installDriverPwa = () => {
-    if (prompt) { trigger(); return }
-    setShowDriverInstall(true)
-  }
-
+  const openDashboard      = () => markSeenAndGo('/app/dashboard')
+  const openDriverPwa      = () => markSeenAndGo('/driver-app')
   const openControllerPwa  = () => markSeenAndGo('/fleet-controller-pwa')
-  const installControllerPwa = () => {
-    if (prompt) { trigger(); return }
-    setShowCtrlInstall(true)
-  }
 
   return (
     <div className="min-h-[100dvh] bg-[#050810] text-white overflow-x-hidden">
@@ -385,30 +366,16 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
             <button
               onClick={openDashboard}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl text-sm transition-all duration-200 shadow-[0_0_30px_rgba(251,191,36,0.25)] hover:shadow-[0_0_40px_rgba(251,191,36,0.4)]">
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl text-sm transition-all duration-200 shadow-[0_0_30px_rgba(251,191,36,0.25)] hover:shadow-[0_0_40px_rgba(251,191,36,0.4)]">
               <Ico name="LayoutDash" size={16} />
-              View Fleet Dashboard
+              Fleet Dashboard
             </button>
 
             <button
-              onClick={installDashboard}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-amber-500/30 hover:border-amber-500/50 text-amber-300 font-semibold rounded-xl text-sm transition-all duration-200">
-              <Ico name="Download" size={15} />
-              {installed ? 'Dashboard Installed ✓' : 'Install Fleet Dashboard'}
-            </button>
-
-            <button
-              onClick={installDriverPwa}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-300 font-semibold rounded-xl text-sm transition-all duration-200">
-              <Ico name="Download" size={15} />
-              Install Driver PWA
-            </button>
-
-            <button
-              onClick={installControllerPwa}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-violet-500/30 hover:border-violet-500/50 text-violet-300 font-semibold rounded-xl text-sm transition-all duration-200">
-              <Ico name="Download" size={15} />
-              Install Controller PWA
+              onClick={openDriverPwa}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-emerald-500/35 hover:border-emerald-500/60 text-emerald-300 font-semibold rounded-xl text-sm transition-all duration-200">
+              <Ico name="Map" size={15} />
+              Driver PWA Demo
             </button>
           </div>
 
@@ -1132,9 +1099,7 @@ export default function Landing() {
       </footer>
 
       {/* ── Install modals ───────────────────────────────────── */}
-      {showDashInstall   && <InstallModal title="Install Fleet Dashboard"   onClose={() => setShowDashInstall(false)} />}
-      {showDriverInstall && <InstallModal title="Install Driver PWA"        onClose={() => setShowDriverInstall(false)} />}
-      {showCtrlInstall   && <InstallModal title="Install Fleet Controller PWA" onClose={() => setShowCtrlInstall(false)} />}
+{/* Install modals removed — buttons now navigate directly */}
     </div>
   )
 }

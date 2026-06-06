@@ -285,6 +285,13 @@ function MapClickHandler({ onMapClick, active }) {
   return null
 }
 
+// Captures the Leaflet map instance into a ref — works across react-leaflet v2/v3/v4
+function MapRefCapture({ mapRef }) {
+  const map = useMap()
+  useEffect(() => { mapRef.current = map }, [map]) // eslint-disable-line
+  return null
+}
+
 // Auto-fit map to route bounds when route loads
 function FitBoundsController({ route }) {
   const map = useMap()
@@ -800,21 +807,18 @@ export default function DriverApp() {
 
       {/* ══════════════ MAP (full screen, z-index 0) ══════════════ */}
       <MapContainer
-        center={mapCenter}
+        center={DEFAULT_CENTER}
         zoom={13}
         zoomControl={false}
         attributionControl={true}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }}
-        ref={mapRef}
       >
+        <MapRefCapture mapRef={mapRef} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           maxZoom={19}
           maxNativeZoom={19}
-          subdomains={['a','b','c']}
-          tileSize={256}
-          crossOrigin={true}
         />
 
         {/* Follow controller */}
