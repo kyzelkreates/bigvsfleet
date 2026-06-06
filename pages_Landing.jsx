@@ -342,6 +342,13 @@ export default function Landing() {
               <span className="hidden sm:inline">Controller</span>
               <span className="sm:hidden">📡</span>
             </button>
+            <button
+              onClick={() => markSeenAndGo('/about')}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/8 border border-cyan-500/20 text-cyan-400 rounded-lg text-xs font-semibold hover:bg-cyan-500/15 transition-colors">
+              <Ico name="Users" size={12} />
+              <span className="hidden sm:inline">About</span>
+              <span className="sm:hidden">👤</span>
+            </button>
           </div>
         </div>
       </header>
@@ -636,6 +643,28 @@ export default function Landing() {
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 border border-violet-500/30 hover:border-violet-500/50 text-violet-300 rounded-xl text-sm font-semibold transition-colors bg-[#0d1426]">
               <Ico name="Activity" size={15} />
               Open Controller PWA
+            </button>
+          </div>
+
+          {/* ── Shortcuts row ── */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => markSeenAndGo('/about')}
+              className="flex items-center gap-2 px-5 py-2.5 bg-cyan-500/6 border border-cyan-500/18 text-cyan-400 rounded-xl text-xs font-semibold hover:bg-cyan-500/12 transition-colors">
+              <Ico name="Users" size={13} />
+              About Kyzel Kreates™
+            </button>
+            <button
+              onClick={openDriverPwa}
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-500/6 border border-blue-500/18 text-blue-400 rounded-xl text-xs font-semibold hover:bg-blue-500/12 transition-colors">
+              <Ico name="Map" size={13} />
+              3-Route Driver Demo
+            </button>
+            <button
+              onClick={openDashboard}
+              className="flex items-center gap-2 px-5 py-2.5 bg-amber-500/6 border border-amber-500/18 text-amber-400 rounded-xl text-xs font-semibold hover:bg-amber-500/12 transition-colors">
+              <Ico name="LayoutDash" size={13} />
+              Fleet Dashboard
             </button>
           </div>
         </div>
@@ -1093,7 +1122,11 @@ export default function Landing() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-2xs text-slate-700">
             <span>© 2026 Big V's Best Routes™ Fleet. Created by Kyzel Kreates™.</span>
-            <span>Powered by 4P3X Intelligent AI™</span>
+            <div className="flex items-center gap-4">
+              <button onClick={() => markSeenAndGo('/about')} className="text-slate-600 hover:text-slate-400 transition-colors underline underline-offset-2">About Kyzel Kreates™</button>
+              <button onClick={openDriverPwa} className="text-slate-600 hover:text-slate-400 transition-colors underline underline-offset-2">Driver Demo</button>
+              <span>Powered by 4P3X Intelligent AI™</span>
+            </div>
           </div>
         </div>
       </footer>

@@ -65,6 +65,7 @@ import PwaDeployment    from './pages_PwaDeployment'     // RUN 2
 import ApiSettings      from './pages_ApiSettings'       // RUN 2
 import BackendSettings  from './pages_BackendSettings'   // RUN 2
 import Landing        from './pages_Landing'              // LANDING PAGE RUN
+import About         from './pages_About'               // About Kyzel Kreates™
 
 // ─── Helpers ──────────────────────────────────────────────────
 
@@ -103,6 +104,9 @@ export const router = createHashRouter([
   { path: '',                       element: <Landing /> },
   // Legacy /landing alias → redirect to /
   { path: '/landing',               element: <Navigate to="/" replace /> },
+
+  // ── About page (public) ───────────────────────────────────
+  { path: '/about',                 element: <About /> },
 
   // ── First-run Setup (public) ──────────────────────────────
   { path: '/auth/setup',            element: <Setup /> },

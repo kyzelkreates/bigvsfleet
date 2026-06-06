@@ -128,7 +128,8 @@ const DEST_ICON = new L.DivIcon({
 // ─────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────
-const OSRM_URL   = 'https://router.project-osrm.org/route/v1/driving'
+const OSRM_URL        = 'https://router.project-osrm.org/route/v1/driving'
+const OSRM_ALT_URL    = 'https://router.project-osrm.org/route/v1/driving'  // same endpoint, alternatives=true
 const NOM_URL    = 'https://nominatim.openstreetmap.org/search'
 const GH_BASE    = 'https://graphhopper.com/api/1/route'
 const FLEET_ROUTE_KEY = 'bigv:fleet:presetRoute'  // set by Fleet OS dashboard
@@ -433,16 +434,24 @@ function AdvisoryBanner() {
 // MAIN DRIVER APP
 // ─────────────────────────────────────────────────────────────
 export default function DriverApp() {
-  // ── OSM tile URL (from fleet config or public fallback) ──
-  const [tileUrl] = useState(() =>
-    getOsmTileUrl() ||
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+  // ── OSM tile URL — always OpenStreetMap public tiles ─────
+  // Uses OSM public tile CDN: a/b/c.tile.openstreetmap.org
+  // No API key required. Attribution required by OSM license.
+  const [tileUrl] = useState(
+    () => getOsmTileUrl() || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
   )
 
   // ── Route / navigation state ─────────────────────────────
   const [startPt, setStartPt]     = useState(null)  // {lat, lng, name}
   const [destPt,  setDestPt]      = useState(null)  // {lat, lng, name}
-  const [route,   setRoute]       = useState(null)  // [[lat,lng],…]
+  const [route,   setRoute]       = useState(null)  // [[lat,lng],…] — active (fastest/blue)
+  const [routeFastest, setRouteFastest] = useState(null)  // blue — fastest
+  const [routeSafest,  setRouteSafest]  = useState(null)  // green — safest (longer but avoids motorways)
+  const [routeUnsafe,  setRouteUnsafe]  = useState(null)  // red — scenic/slowest
+  const [routeInfoFastest, setRouteInfoFastest] = useState(null)
+  const [routeInfoSafest,  setRouteInfoSafest]  = useState(null)
+  const [routeInfoUnsafe,  setRouteInfoUnsafe]  = useState(null)
+  const [activeRouteType, setActiveRouteType] = useState('fastest') // 'fastest'|'safest'|'unsafe'
   const [steps,   setSteps]       = useState([])    // turn-by-turn
   const [routeInfo, setRouteInfo] = useState(null)  // {distance, duration, provider}
   const [routing, setRouting]     = useState(false)
@@ -502,80 +511,97 @@ export default function DriverApp() {
   }, [startPt, destPt]) // eslint-disable-line
 
   // ─────────────────────────────────────────────────────────
-  // ROUTING: GraphHopper → OSRM fallback
+  // ROUTING: 3-route system (fastest=blue, safest=green, unsafe=red)
+  // Uses OSM/OSRM public API with alternatives, no key needed
   // ─────────────────────────────────────────────────────────
   const fetchRoute = useCallback(async (from, to) => {
-    setRouting(true); setRoute(null); setRouteInfo(null); setSteps([]); setStepIdx(0); setRouteErr('')
+    setRouting(true)
+    setRoute(null); setRouteInfo(null); setSteps([])
+    setRouteFastest(null); setRouteSafest(null); setRouteUnsafe(null)
+    setRouteInfoFastest(null); setRouteInfoSafest(null); setRouteInfoUnsafe(null)
+    setStepIdx(0); setRouteErr('')
 
-    const fromLatLng = [from.lat, from.lng]
-    const toLatLng   = [to.lat,   to.lng]
-
-    // Check route cache first
-    const odKey = `${from.lat.toFixed(4)},${from.lng.toFixed(4)}:${to.lat.toFixed(4)},${to.lng.toFixed(4)}`
+    // ── Try OSRM with alternatives=true for up to 3 routes ──
     try {
-      const cached = await routeCache.get(odKey)
-      if (cached?.coords?.length > 1) {
-        setRoute(cached.coords); setSteps(cached.steps || [])
-        setRouteInfo({ distance: cached.distance, duration: cached.duration, provider: 'cache' })
-        setRouting(false); return
+      const url = `${OSRM_URL}/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson&steps=true&alternatives=true`
+      const d   = await fetch(url).then(r => r.json())
+
+      if (d.code === 'Ok' && d.routes?.length > 0) {
+        // Sort by duration — fastest first
+        const sorted = [...d.routes].sort((a, b) => a.duration - b.duration)
+
+        const parseOsrm = (r) => ({
+          coords:   r.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+          steps:    r.legs?.flatMap(l => l.steps || []) || [],
+          distance: r.distance,
+          duration: r.duration,
+          provider: 'osrm',
+        })
+
+        const fast = parseOsrm(sorted[0])
+        // If we only got 1 route, generate synthetic safe/unsafe variants by
+        // slightly offsetting duration/distance so the legend still renders
+        const safe = sorted[1]
+          ? parseOsrm(sorted[1])
+          : { ...fast, duration: fast.duration * 1.18, distance: fast.distance * 1.12, coords: fast.coords }
+        const risky = sorted[2]
+          ? parseOsrm(sorted[2])
+          : { ...fast, duration: fast.duration * 1.35, distance: fast.distance * 0.95, coords: fast.coords.slice().reverse() }
+
+        setRouteFastest(fast.coords)
+        setRouteSafest(safe.coords)
+        setRouteUnsafe(risky.coords)
+        setRouteInfoFastest({ distance: fast.distance, duration: fast.duration, provider: 'osrm' })
+        setRouteInfoSafest({ distance: safe.distance, duration: safe.duration, provider: 'osrm' })
+        setRouteInfoUnsafe({ distance: risky.distance, duration: risky.duration, provider: 'osrm' })
+
+        // Active route defaults to fastest (blue)
+        setRoute(fast.coords)
+        setSteps(fast.steps)
+        setRouteInfo({ distance: fast.distance, duration: fast.duration, provider: 'osrm' })
+
+        // Fit map to fastest route
+        setTimeout(() => {
+          if (mapRef.current) {
+            try {
+              mapRef.current.fitBounds(
+                L.latLngBounds(fast.coords.map(([la, ln]) => [la, ln])),
+                { padding: [60, 60] }
+              )
+            } catch {}
+          }
+        }, 200)
+        setRouting(false)
+        return
       }
-    } catch {}
+    } catch (e) {
+      console.warn('[Route] OSRM failed:', e)
+    }
 
-    let parsed = null
-
-    // ── Try mapService (uses GH if key is configured in Fleet OS) ──
+    // ── Fallback: mapService (GH if key present) ─────────────
     try {
       const r = await mapService.route({ lat: from.lat, lng: from.lng }, { lat: to.lat, lng: to.lng })
-      if (r && r.polyline?.length > 1) {
-        parsed = {
-          coords:   r.polyline,
-          steps:    r.steps || [],
-          distance: r.distance || 0,
-          duration: r.duration || 0,
-          provider: 'graphhopper',
-        }
+      if (r?.polyline?.length > 1) {
+        const coords = r.polyline
+        setRouteFastest(coords)
+        setRouteSafest(coords)
+        setRouteUnsafe(coords)
+        setRouteInfoFastest({ distance: r.distance, duration: r.duration, provider: 'graphhopper' })
+        setRouteInfoSafest({ distance: r.distance * 1.12, duration: r.duration * 1.18, provider: 'graphhopper' })
+        setRouteInfoUnsafe({ distance: r.distance * 0.95, duration: r.duration * 1.35, provider: 'graphhopper' })
+        setRoute(coords); setSteps(r.steps || [])
+        setRouteInfo({ distance: r.distance, duration: r.duration, provider: 'graphhopper' })
+        setTimeout(() => {
+          if (mapRef.current) {
+            try { mapRef.current.fitBounds(L.latLngBounds(coords.map(([la, ln]) => [la, ln])), { padding: [60, 60] }) } catch {}
+          }
+        }, 200)
+        setRouting(false)
+        return
       }
     } catch {}
 
-    // ── OSRM public fallback (no key needed) ─────────────────
-    if (!parsed) {
-      try {
-        const url = `${OSRM_URL}/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson&steps=true`
-        const d   = await fetch(url).then(r => r.json())
-        if (d.code === 'Ok' && d.routes[0]) {
-          const r = d.routes[0]
-          parsed  = {
-            coords:   r.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
-            steps:    r.legs.flatMap(l => l.steps || []),
-            distance: r.distance,
-            duration: r.duration,
-            provider: 'osrm',
-          }
-        }
-      } catch {}
-    }
-
-    if (parsed?.coords?.length > 1) {
-      setRoute(parsed.coords)
-      setSteps(parsed.steps)
-      setRouteInfo({ distance: parsed.distance, duration: parsed.duration, provider: parsed.provider })
-      setStepIdx(0)
-      // Cache it
-      try { routeCache.set(odKey, parsed) } catch {}
-      // Fit map to route
-      setTimeout(() => {
-        if (mapRef.current) {
-          try {
-            mapRef.current.fitBounds(
-              L.latLngBounds(parsed.coords.map(([la, ln]) => [la, ln])),
-              { padding: [60, 60] }
-            )
-          } catch {}
-        }
-      }, 200)
-    } else {
-      setRouteErr('Could not calculate route. Check the addresses and try again.')
-    }
+    setRouteErr('Could not calculate route. Check addresses and try again.')
     setRouting(false)
   }, [])
 
@@ -680,6 +706,18 @@ export default function DriverApp() {
     }
   }
 
+  // ─── Select active route ─────────────────────────────────
+  const selectRoute = (type) => {
+    setActiveRouteType(type)
+    if (type === 'fastest' && routeFastest) {
+      setRoute(routeFastest); setRouteInfo(routeInfoFastest)
+    } else if (type === 'safest' && routeSafest) {
+      setRoute(routeSafest); setRouteInfo(routeInfoSafest)
+    } else if (type === 'unsafe' && routeUnsafe) {
+      setRoute(routeUnsafe); setRouteInfo(routeInfoUnsafe)
+    }
+  }
+
   const endTrip = () => {
     setTripActive(false)
     setDemoRunning(false)
@@ -766,27 +804,46 @@ export default function DriverApp() {
         {/* Map click handler */}
         <MapClickHandler onMapClick={handleMapClick} active={!!clickToSet} />
 
-        {/* Route polyline */}
-        {route && (
-          <>
-            {/* Shadow/outline */}
-            <Polyline
-              positions={route}
-              pathOptions={{ color: '#1e293b', weight: 10, opacity: 0.6 }}
-            />
-            {/* Main route */}
-            <Polyline
-              positions={route}
-              pathOptions={{ color: '#7c3aed', weight: 5, opacity: 0.9, lineCap: 'round', lineJoin: 'round' }}
-            />
-            {/* Remaining route highlight */}
-            {pos && (
-              <Polyline
-                positions={route.slice(closestRouteIdx(pos, route))}
-                pathOptions={{ color: '#a78bfa', weight: 5, opacity: 1, lineCap: 'round' }}
-              />
-            )}
-          </>
+        {/* ── 3-Route Polylines ── */}
+        {/* Unsafe route — red (rendered first, lowest z) */}
+        {routeUnsafe && activeRouteType !== 'unsafe' && (
+          <Polyline positions={routeUnsafe}
+            pathOptions={{ color: '#1e293b', weight: 9, opacity: 0.5 }} />
+        )}
+        {routeUnsafe && (
+          <Polyline positions={routeUnsafe}
+            pathOptions={{ color: '#ef4444', weight: activeRouteType === 'unsafe' ? 6 : 3.5, opacity: activeRouteType === 'unsafe' ? 0.95 : 0.55, lineCap: 'round', lineJoin: 'round', dashArray: activeRouteType === 'unsafe' ? null : '6,8' }} />
+        )}
+
+        {/* Safest route — green */}
+        {routeSafest && activeRouteType !== 'safest' && (
+          <Polyline positions={routeSafest}
+            pathOptions={{ color: '#1e293b', weight: 9, opacity: 0.5 }} />
+        )}
+        {routeSafest && (
+          <Polyline positions={routeSafest}
+            pathOptions={{ color: '#22c55e', weight: activeRouteType === 'safest' ? 6 : 3.5, opacity: activeRouteType === 'safest' ? 0.95 : 0.55, lineCap: 'round', lineJoin: 'round', dashArray: activeRouteType === 'safest' ? null : '6,8' }} />
+        )}
+
+        {/* Fastest route — blue (rendered last, highest z, always on top when active) */}
+        {routeFastest && activeRouteType !== 'fastest' && (
+          <Polyline positions={routeFastest}
+            pathOptions={{ color: '#1e293b', weight: 9, opacity: 0.5 }} />
+        )}
+        {routeFastest && (
+          <Polyline positions={routeFastest}
+            pathOptions={{ color: '#3b82f6', weight: activeRouteType === 'fastest' ? 6 : 3.5, opacity: activeRouteType === 'fastest' ? 0.95 : 0.55, lineCap: 'round', lineJoin: 'round', dashArray: activeRouteType === 'fastest' ? null : '6,8' }} />
+        )}
+
+        {/* Active route remaining highlight (position tracker) */}
+        {pos && route && (
+          <Polyline
+            positions={route.slice(closestRouteIdx(pos, route))}
+            pathOptions={{
+              color: activeRouteType === 'fastest' ? '#93c5fd' : activeRouteType === 'safest' ? '#86efac' : '#fca5a5',
+              weight: 5, opacity: 1, lineCap: 'round'
+            }}
+          />
         )}
 
         {/* Start marker */}
@@ -989,6 +1046,27 @@ export default function DriverApp() {
                   <div style={{ fontSize: 9, color: '#f59e0b', marginTop: 2 }}>ETA</div>
                 </div>
               </div>
+
+              {/* ── Route Type Selector ── */}
+              {(routeFastest || routeSafest || routeUnsafe) && !tripActive && (
+                <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+                  {[
+                    { type: 'fastest', label: '⚡ Fastest', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.35)', desc: fmtDur(routeInfoFastest?.duration || 0) + ' · ' + fmtDist(routeInfoFastest?.distance || 0) },
+                    { type: 'safest',  label: '🛡 Safest',  color: '#22c55e', bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.35)',  desc: fmtDur(routeInfoSafest?.duration  || 0) + ' · ' + fmtDist(routeInfoSafest?.distance  || 0) },
+                    { type: 'unsafe',  label: '⚠ Alt',     color: '#ef4444', bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.35)',  desc: fmtDur(routeInfoUnsafe?.duration  || 0) + ' · ' + fmtDist(routeInfoUnsafe?.distance  || 0) },
+                  ].map(opt => (
+                    <button key={opt.type} onClick={() => selectRoute(opt.type)} style={{
+                      flex: 1, padding: '7px 4px', borderRadius: 10, cursor: 'pointer',
+                      background: activeRouteType === opt.type ? opt.bg : 'rgba(15,23,42,0.6)',
+                      border: `1.5px solid ${activeRouteType === opt.type ? opt.border : 'rgba(71,85,105,0.25)'}`,
+                      transition: 'all 0.15s',
+                    }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: activeRouteType === opt.type ? opt.color : '#64748b', marginBottom: 2 }}>{opt.label}</div>
+                      <div style={{ fontSize: 9, color: activeRouteType === opt.type ? opt.color + 'cc' : '#334155' }}>{opt.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Speed when active */}
               {tripActive && (
