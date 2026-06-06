@@ -29,6 +29,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import Icon from './components_ui_Icon'
 import { useControllerStore, useDriverPwaStore, useDemoLiveStore, useFleetStore } from './core_storage'
 import { getOsmTileUrl } from './services_maps_mapProviderManager'

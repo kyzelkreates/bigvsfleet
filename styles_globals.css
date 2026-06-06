@@ -30,10 +30,16 @@
   }
 
   body {
-    @apply bg-apex-base text-apex-text-primary font-sans overflow-hidden;
+    @apply bg-apex-base text-apex-text-primary font-sans;
     height: 100dvh;
     width: 100dvw;
     max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Default body for app pages — locked vertical scroll (dashboard/PWA use fixed layouts) */
+  body {
+    overflow-y: hidden;
     overflow-x: hidden;
   }
 

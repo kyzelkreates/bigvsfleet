@@ -134,7 +134,7 @@ const OSRM_ALT_URL    = 'https://router.project-osrm.org/route/v1/driving'  // s
 const NOM_URL    = 'https://nominatim.openstreetmap.org/search'
 const GH_BASE    = 'https://graphhopper.com/api/1/route'
 const FLEET_ROUTE_KEY = 'bigv:fleet:presetRoute'  // set by Fleet OS dashboard
-const DEFAULT_CENTER  = [51.508, -0.1081]          // London — Trafalgar Sq fallback
+const DEFAULT_CENTER  = [53.800, -2.200]            // Central UK — Oxford/Glasgow midpoint
 
 // ─────────────────────────────────────────────────────────────
 // Utilities
@@ -249,8 +249,8 @@ function loadFleetPreset() {
 }
 
 // Demo route: London city centre drive (Trafalgar Sq → London Bridge)
-const DEMO_START = { lat: 51.5080, lng: -0.1281, name: 'Trafalgar Square, London' }
-const DEMO_END   = { lat: 51.5079, lng: -0.0877, name: 'London Bridge, London'    }
+const DEMO_START = { lat: 51.7520, lng: -1.2577, name: 'Oxford, UK' }
+const DEMO_END   = { lat: 55.8642, lng: -4.2518, name: 'Glasgow, UK'              }
 
 // ─────────────────────────────────────────────────────────────
 // MapController — follow + re-centre
@@ -449,6 +449,49 @@ function AdvisoryBanner() {
       <span style={{ color: '#64748b', fontSize: '9.5px', lineHeight: 1.3 }}>
         Advisory only — does not guarantee route legality, vehicle clearance or road suitability. Always obey road signs and local regulations.
       </span>
+    </div>
+  )
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// Route Legend — 3-colour system explanation
+// ─────────────────────────────────────────────────────────────
+function RouteLegend({ visible }) {
+  if (!visible) return null
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 60,
+      right: 12,
+      zIndex: 420,
+      background: 'rgba(5,8,16,0.92)',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderRadius: 10,
+      padding: '10px 12px',
+      minWidth: 170,
+      maxWidth: 190,
+    }}>
+      <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
+        Route Legend
+      </div>
+      {[
+        { color: '#22c55e', label: 'Safe Route',     desc: 'Preferred — advisory safe' },
+        { color: '#f59e0b', label: 'Caution Route',  desc: 'Fastest — review advised' },
+        { color: '#ef4444', label: 'High Risk',       desc: 'Restrictions — human check required' },
+      ].map(({ color, label, desc }) => (
+        <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+          <div style={{ width: 28, height: 4, borderRadius: 2, background: color, flexShrink: 0 }} />
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#e2e8f0', lineHeight: 1.2 }}>{label}</div>
+            <div style={{ fontSize: 9, color: '#64748b', lineHeight: 1.2 }}>{desc}</div>
+          </div>
+        </div>
+      ))}
+      <div style={{ marginTop: 8, paddingTop: 7, borderTop: '1px solid rgba(255,255,255,0.06)', fontSize: 8.5, color: '#475569', lineHeight: 1.4 }}>
+        Advisory only — does not guarantee legal compliance or route suitability.
+      </div>
     </div>
   )
 }
@@ -810,7 +853,7 @@ export default function DriverApp() {
       <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }}>
       <MapContainer
         center={DEFAULT_CENTER}
-        zoom={13}
+        zoom={6}
         zoomControl={false}
         attributionControl={true}
         style={{ width: '100%', height: '100%' }}
@@ -860,7 +903,7 @@ export default function DriverApp() {
         )}
         {routeFastest && (
           <Polyline positions={routeFastest}
-            pathOptions={{ color: '#3b82f6', weight: activeRouteType === 'fastest' ? 6 : 3.5, opacity: activeRouteType === 'fastest' ? 0.95 : 0.55, lineCap: 'round', lineJoin: 'round', dashArray: activeRouteType === 'fastest' ? null : '6,8' }} />
+            pathOptions={{ color: '#f59e0b', weight: activeRouteType === 'fastest' ? 6 : 3.5, opacity: activeRouteType === 'fastest' ? 0.95 : 0.55, lineCap: 'round', lineJoin: 'round', dashArray: activeRouteType === 'fastest' ? null : '6,8' }} />
         )}
 
         {/* Active route remaining highlight (position tracker) */}
@@ -868,7 +911,7 @@ export default function DriverApp() {
           <Polyline
             positions={route.slice(closestRouteIdx(pos, route))}
             pathOptions={{
-              color: activeRouteType === 'fastest' ? '#93c5fd' : activeRouteType === 'safest' ? '#86efac' : '#fca5a5',
+              color: activeRouteType === 'fastest' ? '#fcd34d' : activeRouteType === 'safest' ? '#86efac' : '#fca5a5',
               weight: 5, opacity: 1, lineCap: 'round'
             }}
           />
@@ -1080,9 +1123,9 @@ export default function DriverApp() {
               {(routeFastest || routeSafest || routeUnsafe) && !tripActive && (
                 <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
                   {[
-                    { type: 'fastest', label: '⚡ Fastest', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.35)', desc: fmtDur(routeInfoFastest?.duration || 0) + ' · ' + fmtDist(routeInfoFastest?.distance || 0) },
                     { type: 'safest',  label: '🛡 Safest',  color: '#22c55e', bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.35)',  desc: fmtDur(routeInfoSafest?.duration  || 0) + ' · ' + fmtDist(routeInfoSafest?.distance  || 0) },
-                    { type: 'unsafe',  label: '⚠ Alt',     color: '#ef4444', bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.35)',  desc: fmtDur(routeInfoUnsafe?.duration  || 0) + ' · ' + fmtDist(routeInfoUnsafe?.distance  || 0) },
+                    { type: 'fastest', label: '⚡ Caution', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.35)', desc: fmtDur(routeInfoFastest?.duration || 0) + ' · ' + fmtDist(routeInfoFastest?.distance || 0) },
+                    { type: 'unsafe',  label: '🚫 High Risk', color: '#ef4444', bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.35)', desc: fmtDur(routeInfoUnsafe?.duration  || 0) + ' · ' + fmtDist(routeInfoUnsafe?.distance  || 0) },
                   ].map(opt => (
                     <button key={opt.type} onClick={() => selectRoute(opt.type)} style={{
                       flex: 1, padding: '7px 4px', borderRadius: 10, cursor: 'pointer',
@@ -1328,6 +1371,9 @@ export default function DriverApp() {
           onClose={() => setPanel('none')}
         />
       )}
+
+      {/* ══════════════ ROUTE LEGEND ════════════════════════════════ */}
+      <RouteLegend visible={!!(routeFastest || routeSafest || routeUnsafe)} />
 
       {/* ══════════════ ADVISORY BANNER (always) ══════════════════ */}
       <AdvisoryBanner />

@@ -377,6 +377,14 @@ export default function Landing() {
               <Ico name="Map" size={15} />
               Driver PWA Demo
             </button>
+
+            <button
+              onClick={openControllerPwa}
+              data-testid="hero-btn-controller"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0d1426] hover:bg-[#111827] border border-violet-500/35 hover:border-violet-500/60 text-violet-300 font-semibold rounded-xl text-sm transition-all duration-200">
+              <Ico name="Activity" size={15} />
+              Controller PWA
+            </button>
           </div>
 
           {/* Advisory note under buttons */}
