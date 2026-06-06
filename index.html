@@ -64,10 +64,10 @@
     /* ── BASE: full-page scroll on ALL devices ────────────── */
     html {
       background: var(--bg);
-      overflow-y: scroll;
+      overflow-y: auto;
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
-      height: 100%;
+      /* height: auto — never lock html height */
     }
     body {
       background: var(--bg);
@@ -76,13 +76,18 @@
       min-height: 100%;
       width: 100%;
       overflow-x: hidden;
+      overflow-y: auto; /* explicit — never let Tailwind reset kill this */
       -webkit-font-smoothing: antialiased;
       -webkit-overflow-scrolling: touch;
     }
 
     /* ── REACT ROOT — hidden until React mounts ─────────── */
     #root { display: none; }
-    #root.ready { display: block; min-height: 100vh; }
+    #root.ready {
+      display: block;
+      /* height is auto — landing page needs full page scroll */
+      /* dashboard/driver PWA override via body.page-app / body.page-driver classes */
+    }
 
     /* ── STATIC SHELL — full height, never clips scroll ─── */
     #static-shell {

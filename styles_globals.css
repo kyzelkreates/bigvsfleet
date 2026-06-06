@@ -66,9 +66,20 @@
     height: 100dvh;
   }
 
+  /* ── DEFAULT body (no class) — always scrollable ──
+     Landing page adds .page-landing via useEffect.
+     During the brief gap before that fires, body must scroll. */
+  body:not(.page-app):not(.page-driver) {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+  }
+
   #root {
     max-width: 100%;
     overflow-x: hidden;
+    /* Default: auto height so landing page can scroll naturally */
+    height: auto;
   }
 
   /* Landing page root */
@@ -248,7 +259,7 @@
 
 /* ── Prevent overscroll bounce on iOS ── */
 html, body {
-  overscroll-behavior: none;
+  overscroll-behavior-x: none; /* only lock horizontal overscroll — not vertical */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -261,6 +272,7 @@ html, body {
 html, body, #root {
   max-width: 100%;
   overflow-x: hidden;
+  /* vertical scroll is controlled per-page via body classes */
 }
 
 /* ── Images / media never overflow containers ── */

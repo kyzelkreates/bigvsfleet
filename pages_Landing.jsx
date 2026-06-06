@@ -270,7 +270,7 @@ export default function Landing() {
   const openControllerPwa  = () => markSeenAndGo('/fleet-controller-pwa')
 
   return (
-    <div className="min-h-[100dvh] bg-[#050810] text-white overflow-x-hidden">
+    <div className="min-h-[100dvh] bg-[#050810] text-white overflow-x-hidden" style={{ overflowY: "auto", height: "auto" }}>
 
       {/* ── Background grid overlay ──────────────────────────── */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
