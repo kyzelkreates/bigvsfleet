@@ -18,6 +18,7 @@ export const AI_REPORTS_KEY    = 'apex:ai_reports'    // sentinel + routemind re
 export const PAIRING_CODES_KEY = 'apex:pairing_codes' // active sync codes
 export const ACTIVE_DRIVERS_KEY= 'apex:active_drivers'// paired + online drivers
 export const SYNC_CHANNEL      = 'apex_fleet_sync'    // BroadcastChannel name
+import { getSupabaseClient, isSupabaseReady } from './services_supabase_supabaseClient'
 
 // ─── BroadcastChannel singleton ───────────────────────────────
 let _channel = null
