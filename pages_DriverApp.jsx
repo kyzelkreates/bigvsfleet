@@ -260,7 +260,13 @@ function MapController({ pos, follow, zoom }) {
   const prevFollow = useRef(follow)
 
   // Scroll to top on mount
+  // ── Body class management for CSS scroll strategy ──
   useEffect(() => {
+    document.body.classList.add('page-driver')
+    return () => document.body.classList.remove('page-driver')
+  }, [])
+
+    useEffect(() => {
     try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) } catch {}
     try { window.scroll(0, 0) } catch {}
   }, [])
@@ -436,7 +442,7 @@ function SearchPanel({ onSelect, onClose, label }) {
 // ─────────────────────────────────────────────────────────────
 function AdvisoryBanner({ navActive }) {
   return (
-    <div style={{
+    <div className="driver-advisory-banner" style={{
       position: 'absolute', bottom: navActive ? 90 : 0, left: 0, right: 0,
       zIndex: 410,
       background: 'rgba(5,8,16,0.85)',
@@ -511,13 +517,13 @@ export default function DriverApp() {
   const [startPt, setStartPt]     = useState(null)  // {lat, lng, name}
   const [destPt,  setDestPt]      = useState(null)  // {lat, lng, name}
   const [route,   setRoute]       = useState(null)  // [[lat,lng],…] — active (fastest/blue)
-  const [routeFastest, setRouteFastest] = useState(null)  // blue — fastest
-  const [routeSafest,  setRouteSafest]  = useState(null)  // green — safest (longer but avoids motorways)
-  const [routeUnsafe,  setRouteUnsafe]  = useState(null)  // red — scenic/slowest
+  const [routeFastest, setRouteFastest] = useState(null)  // AMBER (#f59e0b) — caution/fastest
+  const [routeSafest,  setRouteSafest]  = useState(null)  // GREEN (#22c55e) — safe/primary route
+  const [routeUnsafe,  setRouteUnsafe]  = useState(null)  // RED (#ef4444) — danger/high-risk route
   const [routeInfoFastest, setRouteInfoFastest] = useState(null)
   const [routeInfoSafest,  setRouteInfoSafest]  = useState(null)
   const [routeInfoUnsafe,  setRouteInfoUnsafe]  = useState(null)
-  const [activeRouteType, setActiveRouteType] = useState('fastest') // 'fastest'|'safest'|'unsafe'
+  const [activeRouteType, setActiveRouteType] = useState('fastest') // 'fastest'=amber|'safest'=green|'unsafe'=red
   const [steps,   setSteps]       = useState([])    // turn-by-turn
   const [routeInfo, setRouteInfo] = useState(null)  // {distance, duration, provider}
   const [routing, setRouting]     = useState(false)
@@ -533,6 +539,8 @@ export default function DriverApp() {
 
   // ── Trip state ───────────────────────────────────────────
   const [tripActive,   setTripActive]   = useState(false)
+  // Landscape HUD toggle — default open (true). User can collapse in landscape.
+  const [hudVisible,   setHudVisible]   = useState(true)
   const [tripArrived,  setTripArrived]  = useState(false)
   const [tripDist,     setTripDist]     = useState(0)   // metres driven
   const [stepIdx,      setStepIdx]      = useState(0)
@@ -577,7 +585,7 @@ export default function DriverApp() {
   }, [startPt, destPt]) // eslint-disable-line
 
   // ─────────────────────────────────────────────────────────
-  // ROUTING: 3-route system (fastest=blue, safest=green, unsafe=red)
+  // ROUTING: 3-colour system — safe=green #22c55e | caution=amber #f59e0b | danger=red #ef4444
   // Uses OSM/OSRM public API with alternatives, no key needed
   // ─────────────────────────────────────────────────────────
   const fetchRoute = useCallback(async (from, to) => {
@@ -621,7 +629,7 @@ export default function DriverApp() {
         setRouteInfoSafest({ distance: safe.distance, duration: safe.duration, provider: 'osrm' })
         setRouteInfoUnsafe({ distance: risky.distance, duration: risky.duration, provider: 'osrm' })
 
-        // Active route defaults to fastest (blue)
+        // Active route defaults to fastest (caution/amber)
         setRoute(fast.coords)
         setSteps(fast.steps)
         setRouteInfo({ distance: fast.distance, duration: fast.duration, provider: 'osrm' })
@@ -896,7 +904,7 @@ export default function DriverApp() {
             pathOptions={{ color: '#22c55e', weight: activeRouteType === 'safest' ? 6 : 3.5, opacity: activeRouteType === 'safest' ? 0.95 : 0.55, lineCap: 'round', lineJoin: 'round', dashArray: activeRouteType === 'safest' ? null : '6,8' }} />
         )}
 
-        {/* Fastest route — blue (rendered last, highest z, always on top when active) */}
+        {/* Caution route — AMBER #f59e0b (rendered last, highest z, always on top when active) */}
         {routeFastest && activeRouteType !== 'fastest' && (
           <Polyline positions={routeFastest}
             pathOptions={{ color: '#1e293b', weight: 9, opacity: 0.5 }} />
@@ -939,7 +947,7 @@ export default function DriverApp() {
       </div>{/* /map-wrapper */}
 
       {/* ══════════════ TOP NAV BAR ══════════════════════════════ */}
-      <div style={{
+      <div className="driver-topbar" style={{
         position: 'absolute', top: 0, left: 0, right: 0,
         zIndex: 400,
         background: 'linear-gradient(to bottom, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0.0) 100%)',
@@ -1055,7 +1063,7 @@ export default function DriverApp() {
 
           {/* Route info card — pre-navigation only */}
           {!tripActive && routeInfo && !panel.startsWith('search') && panel !== 'steps' && (
-            <div style={{
+            <div className="driver-prenav-panel" style={{
               background: 'rgba(13,20,38,0.96)',
               border: '1px solid rgba(124,58,237,0.2)',
               borderRadius: 16, padding: '12px 16px',
@@ -1380,7 +1388,7 @@ export default function DriverApp() {
         <>
           {/* ── Turn instruction — top-centre big banner ── */}
           {currentStep && (
-            <div style={{
+            <div className="driver-turn-banner" style={{
               position: 'absolute', top: 52, left: '50%', transform: 'translateX(-50%)',
               zIndex: 420,
               background: 'rgba(5,8,22,0.94)',
@@ -1392,13 +1400,13 @@ export default function DriverApp() {
               maxWidth: 340, minWidth: 200,
               boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
             }}>
-              <span style={{ fontSize: 32, lineHeight: 1, flexShrink: 0 }}>{stepArrow(currentStep)}</span>
+              <span className="driver-turn-arrow" style={{ fontSize: 32, lineHeight: 1, flexShrink: 0 }}>{stepArrow(currentStep)}</span>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
+                <div className="driver-turn-text" style={{ fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
                   {stepText(currentStep)}
                 </div>
                 {currentStep.distance > 0 && (
-                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                  <div className="driver-turn-dist" style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
                     In {fmtDist(currentStep.distance)}
                   </div>
                 )}
@@ -1406,9 +1414,11 @@ export default function DriverApp() {
             </div>
           )}
 
-          {/* ── Mini bottom HUD strip ── */}
-          <div style={{
-            position: 'absolute', bottom: 32, left: 12, right: 12,
+          {/* ── Mini bottom HUD strip (visible unless collapsed in landscape) ── */}
+          {hudVisible && <div className="driver-bottom-hud" style={{
+            position: 'absolute',
+            bottom: `calc(${32}px + env(safe-area-inset-bottom, 0px))`,
+            left: 12, right: 12,
             zIndex: 420,
             background: 'rgba(5,8,22,0.92)',
             backdropFilter: 'blur(14px)',
@@ -1421,30 +1431,30 @@ export default function DriverApp() {
 
             {/* Speed */}
             <div style={{ textAlign: 'center', minWidth: 46 }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: speed > 90 ? '#ef4444' : '#22c55e', lineHeight: 1 }}>
+              <div className="driver-hud-speed-num" style={{ fontSize: 22, fontWeight: 800, color: speed > 90 ? '#ef4444' : '#22c55e', lineHeight: 1 }}>
                 {speed}
               </div>
-              <div style={{ fontSize: 8, color: '#475569', marginTop: 1 }}>km/h</div>
+              <div className="driver-hud-stat-label" style={{ fontSize: 8, color: '#475569', marginTop: 1 }}>km/h</div>
             </div>
 
             <div style={{ width: 1, height: 32, background: 'rgba(71,85,105,0.4)', flexShrink: 0 }} />
 
             {/* Distance remaining */}
             <div style={{ textAlign: 'center', flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
+              <div className="driver-hud-stat-val" style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
                 {fmtDist(pos ? distRemaining : routeInfo?.distance || 0)}
               </div>
-              <div style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>remaining</div>
+              <div className="driver-hud-stat-label" style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>remaining</div>
             </div>
 
             <div style={{ width: 1, height: 32, background: 'rgba(71,85,105,0.4)', flexShrink: 0 }} />
 
             {/* ETA */}
             <div style={{ textAlign: 'center', flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#a78bfa', lineHeight: 1 }}>
+              <div className="driver-hud-stat-val" style={{ fontSize: 15, fontWeight: 700, color: '#a78bfa', lineHeight: 1 }}>
                 {fmtETA(pos ? distRemaining / 15 : routeInfo?.duration || 0)}
               </div>
-              <div style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>ETA</div>
+              <div className="driver-hud-stat-label" style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>ETA</div>
             </div>
 
             <div style={{ width: 1, height: 32, background: 'rgba(71,85,105,0.4)', flexShrink: 0 }} />
@@ -1478,7 +1488,17 @@ export default function DriverApp() {
                 borderRadius: 20, padding: '2px 7px', letterSpacing: '0.05em',
               }}>DEMO SIMULATING</div>
             )}
-          </div>
+          </div>}
+
+          {/* ── Landscape HUD toggle button — shown by CSS media query in landscape ── */}
+          <button
+            className="driver-hud-toggle-btn"
+            onClick={() => setHudVisible(v => !v)}
+            title={hudVisible ? 'Hide HUD' : 'Show HUD'}
+            aria-label={hudVisible ? 'Hide route HUD' : 'Show route HUD'}
+          >
+            {hudVisible ? '▼' : '▲'}
+          </button>
         </>
       )}
 

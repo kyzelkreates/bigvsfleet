@@ -21,6 +21,13 @@ export default function AppShell() {
 
   // Close drawer + scroll main content to top on route change
   const mainRef = useRef(null)
+
+  // ── Body class for CSS scroll strategy ──
+  useEffect(() => {
+    document.body.classList.add('page-app')
+    return () => document.body.classList.remove('page-app')
+  }, [])
+
   useEffect(() => {
     useAppStore.getState().closeSidebar?.()
     // Scroll the main content area to the top
