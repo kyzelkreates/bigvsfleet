@@ -325,7 +325,7 @@
 
 <!-- ═══════════════════════════════════════════════════════════
      STATIC SHELL — renders instantly (zero JS required).
-     All navigation uses window.location.href — works before
+     All navigation uses window.location.hash — soft SPA navigation,
      React Router is active.  Hides once React is ready.
 ═══════════════════════════════════════════════════════════ -->
 <div id="static-shell">
@@ -497,12 +497,27 @@
    navigates to the hash route. React Router picks it up.
 ════════════════════════════════════════════════════════════ */
 function goTo(hash) {
+  // Mark landing as seen so React Router doesn't redirect back to /
+  try { localStorage.setItem('bigv:landing:seen', 'true'); } catch(e) {}
+
+  // Hide static shell immediately
   var shell = document.getElementById('static-shell');
   var root  = document.getElementById('root');
-  if (shell) shell.classList.add('gone');
-  if (root)  root.classList.add('ready');
-  // hash is already a full path like '/#/app/dashboard' — just append to origin
-  window.location.href = window.location.origin + (hash.startsWith('/') ? hash : '/' + hash);
+  if (shell) {
+    shell.classList.add('gone');
+    shell.style.display = 'none';
+    shell.style.pointerEvents = 'none';
+    shell.setAttribute('aria-hidden', 'true');
+  }
+  if (root) root.classList.add('ready');
+
+  // Extract just the hash portion — do NOT do a full page reload.
+  // React Router createHashRouter expects the hash to be '/app/dashboard' (with leading slash).
+  // e.g. '/#/app/dashboard' → '/app/dashboard'
+  // window.location.hash = '/app/dashboard'  →  URL becomes: https://.../#/app/dashboard ✓
+  var routePath = hash.replace(/^[/#]+/, ''); // strip all leading / and # chars
+  if (!routePath.startsWith('/')) routePath = '/' + routePath; // ensure leading slash
+  window.location.hash = routePath;
 }
 
 /* ════════════════════════════════════════════════════════════
