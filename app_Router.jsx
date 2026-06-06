@@ -66,6 +66,7 @@ import ApiSettings      from './pages_ApiSettings'       // RUN 2
 import BackendSettings  from './pages_BackendSettings'   // RUN 2
 import Landing        from './pages_Landing'              // LANDING PAGE RUN
 import About         from './pages_About'               // About Kyzel Kreates™
+import InvestorSafetyCase from './pages_InvestorSafetyCase' // Investor & Safety Case
 
 // ─── Helpers ──────────────────────────────────────────────────
 
@@ -108,8 +109,9 @@ export const router = createHashRouter([
   // ── About page (public) ───────────────────────────────────
   { path: '/about',                 element: <About /> },
 
-  // ── Investor page (public) — landing page serves as investor deck ─
-  { path: '/investor',              element: <Navigate to="/" replace /> },
+  // ── Investor & Safety Case (public — dedicated page) ────────────
+  { path: '/investor-safety-case',  element: <InvestorSafetyCase /> },
+  { path: '/investor',              element: <Navigate to="/investor-safety-case" replace /> },
 
   // ── First-run Setup (public) ──────────────────────────────
   { path: '/auth/setup',            element: <Setup /> },
