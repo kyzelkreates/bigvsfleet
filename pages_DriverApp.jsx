@@ -133,7 +133,7 @@ const OSRM_ALT_URL    = 'https://router.project-osrm.org/route/v1/driving'  // s
 const NOM_URL    = 'https://nominatim.openstreetmap.org/search'
 const GH_BASE    = 'https://graphhopper.com/api/1/route'
 const FLEET_ROUTE_KEY = 'bigv:fleet:presetRoute'  // set by Fleet OS dashboard
-const DEFAULT_CENTER  = [51.505, -0.09]            // London fallback
+const DEFAULT_CENTER  = [51.508, -0.1081]          // London — Trafalgar Sq fallback
 
 // ─────────────────────────────────────────────────────────────
 // Utilities
@@ -282,6 +282,21 @@ function MapClickHandler({ onMapClick, active }) {
       if (active) onMapClick([e.latlng.lat, e.latlng.lng])
     },
   })
+  return null
+}
+
+// Auto-fit map to route bounds when route loads
+function FitBoundsController({ route }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!route?.length) return
+    try {
+      map.fitBounds(
+        L.latLngBounds(route.map(([la, ln]) => [la, ln])),
+        { padding: [60, 60], animate: true, duration: 0.8 }
+      )
+    } catch {}
+  }, [route]) // eslint-disable-line
   return null
 }
 
@@ -786,16 +801,20 @@ export default function DriverApp() {
       {/* ══════════════ MAP (full screen, z-index 0) ══════════════ */}
       <MapContainer
         center={mapCenter}
-        zoom={mapZoom}
+        zoom={13}
         zoomControl={false}
         attributionControl={true}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }}
-        whenCreated={m => { mapRef.current = m }}
+        ref={mapRef}
       >
         <TileLayer
-          url={tileUrl}
-          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           maxZoom={19}
+          maxNativeZoom={19}
+          subdomains={['a','b','c']}
+          tileSize={256}
+          crossOrigin={true}
         />
 
         {/* Follow controller */}
@@ -803,6 +822,9 @@ export default function DriverApp() {
 
         {/* Map click handler */}
         <MapClickHandler onMapClick={handleMapClick} active={!!clickToSet} />
+
+        {/* Auto-fit to route when loaded */}
+        <FitBoundsController route={routeFastest || route} />
 
         {/* ── 3-Route Polylines ── */}
         {/* Unsafe route — red (rendered first, lowest z) */}
